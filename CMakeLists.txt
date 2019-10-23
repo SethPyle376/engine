@@ -14,7 +14,10 @@ set(SOURCE_FILES ${MAINSOURCES} ${RENDERSOURCES})
 add_executable(Application ${SOURCE_FILES})
 
 if (WIN32)
-set(SDL2_LIBRARIES "${CMAKE_CURRENT_LIST_DIR}/external/SDL2/lib/x64/SDL2.lib")
+    set(SDL2_LIBRARIES "${CMAKE_CURRENT_LIST_DIR}/external/SDL2/lib/x64/SDL2.lib")
+    set(VOLK_STATIC_DEFINES VK_USE_PLATFORM_WIN32_KHR)
 endif (WIN32)
 
-target_link_libraries(Application ${SDL2_LIBRARIES})
+add_subdirectory(external/volk)
+
+target_link_libraries(Application ${SDL2_LIBRARIES} volk volk_headers)

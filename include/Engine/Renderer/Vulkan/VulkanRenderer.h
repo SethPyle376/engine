@@ -15,18 +15,31 @@ const std::vector<const char*> validationLayers = {
     "VK_LAYER_KHRONOS_validation"
 };
 
-#ifdef NDEBUG
-    const bool enableValidationLayers = false;
-#else
-    const bool enableValidationLayers = true;
-#endif
-
 class VulkanRenderer {
 private:
+    #ifdef NDEBUG
+        const bool enableValidationLayers = false;
+        std::vector<const char*> extensions;
+    #else
+        const bool enableValidationLayers = true;
+        std::vector<const char*> extensions = {
+            VK_EXT_DEBUG_REPORT_EXTENSION_NAME
+        };
+    #endif
+    RendererParams params;
+    SDL_Window* window;
+
+    VkInstance instance;
+
+    void initSDL();
+    void initWindow();
+    void initVolk();
     void createInstance();
 public:
+    VulkanRenderer(const RendererParams &params);
+    ~VulkanRenderer();
     bool checkValidationLayerSupport();
-    void init(const RendererParams &params);
+    void init();
     void beginFrame();
     void endFrame();
 };

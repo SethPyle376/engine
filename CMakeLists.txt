@@ -1,10 +1,12 @@
 set(CMAKE_CXX_STANDARD 17)
 cmake_minimum_required(VERSION 3.4.1)
 
+find_package(SDL2 REQUIRED)
 
 include_directories(include external/Vulkan-Headers/include)
 include_directories(external/SDL2/include)
 include_directories(external/Vulkan-Headers/include)
+include_directories(${SDL2_INCLUDE_DIRS})
 
 file(GLOB MAINSOURCES src/*.cpp)
 file(GLOB RENDERSOURCES src/Engine/Renderer/*/*.cpp)
@@ -17,6 +19,11 @@ if (WIN32)
     set(SDL2_LIBRARIES "${CMAKE_CURRENT_LIST_DIR}/external/SDL2/lib/x64/SDL2.lib")
     set(VOLK_STATIC_DEFINES VK_USE_PLATFORM_WIN32_KHR)
 endif (WIN32)
+
+if (UNIX)
+target_link_libraries(Application ${CMAKE_DL_LIBS})
+target_link_libraries( Application SDL2::SDL2 )
+endif (UNIX)
 
 add_subdirectory(external/volk)
 

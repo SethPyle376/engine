@@ -5,10 +5,10 @@
 
 #include "volk.h"
 
-#include "SDL.h"
+#include "SDL2/SDL.h"
 #undef main
 
-#include "SDL_vulkan.h"
+#include "SDL2/SDL_vulkan.h"
 #include "Engine/Renderer/Renderer.h"
 
 const std::vector<const char*> validationLayers = {

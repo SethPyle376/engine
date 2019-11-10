@@ -7,6 +7,7 @@ include_directories(include external/Vulkan-Headers/include)
 include_directories(external/SDL2/include)
 include_directories(external/Vulkan-Headers/include)
 include_directories(${SDL2_INCLUDE_DIRS})
+include_directories(external/spdlog/include)
 
 file(GLOB MAINSOURCES src/*.cpp)
 file(GLOB RENDERSOURCES src/Engine/Renderer/*/*.cpp)

@@ -3,6 +3,8 @@
 #include <vector>
 #include <stdexcept>
 
+#include "spdlog/spdlog.h"
+
 #include "volk.h"
 
 #include "SDL2/SDL.h"
@@ -30,6 +32,8 @@ private:
     SDL_Window* window;
 
     VkInstance instance;
+
+    VkPhysicalDevice device;
 
     void initSDL();
     void initWindow();

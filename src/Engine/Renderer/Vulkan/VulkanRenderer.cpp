@@ -5,6 +5,8 @@ VulkanRenderer::VulkanRenderer(const RendererParams &params) {
 }
 
 VulkanRenderer::~VulkanRenderer() {
+    spdlog::debug("destroying vulkan renderer");
+    
     vkDestroyInstance(instance, nullptr);
     SDL_DestroyWindow(window);
 }
@@ -35,10 +37,12 @@ bool VulkanRenderer::checkValidationLayerSupport() {
 }
 
 void VulkanRenderer::init() {
+    spdlog::set_level(spdlog::level::debug);
     initSDL();
     initVolk();
     initWindow();
     createInstance();
+    volkLoadInstance(instance);
 }
 
 void VulkanRenderer::beginFrame() {
@@ -59,11 +63,13 @@ void VulkanRenderer::initVolk() {
 }
 
 void VulkanRenderer::initWindow() {
+        spdlog::debug("initializing window");
         Uint32 windowFlags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_VULKAN;
         window = SDL_CreateWindow("Titus v0.1", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, params.x, params.y, windowFlags);
 }
 
 void VulkanRenderer::createInstance() {
+    spdlog::debug("initializing vulkan instance");
     if (enableValidationLayers && !checkValidationLayerSupport()) {
         throw std::runtime_error("validation layers unsupported");
     }
@@ -104,6 +110,8 @@ void VulkanRenderer::createInstance() {
     VkResult result = vkCreateInstance(&createInfo, nullptr, &instance);
 
     if (result != VK_SUCCESS) {
-
+        spdlog::error("failed to initialize instance");
+    } else {
+        spdlog::debug("instance initialized");
     }
 }

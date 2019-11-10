@@ -6,7 +6,17 @@ int main() {
     params.y = 720;
     VulkanRenderer vulkanRenderer = VulkanRenderer(params);
     vulkanRenderer.init();
-    while (true) {
-        continue;
-    }
+
+    bool quit = false;
+	SDL_Event e;
+
+	while (!quit) {
+		vulkanRenderer.beginFrame();
+		vulkanRenderer.endFrame();
+		SDL_PollEvent(&e);
+		if (e.type == SDL_QUIT) {
+			quit = true;
+		}
+	}
+	return 0;
 }

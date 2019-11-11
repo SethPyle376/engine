@@ -6,7 +6,8 @@ VulkanRenderer::VulkanRenderer(const RendererParams &params) {
 
 VulkanRenderer::~VulkanRenderer() {
     spdlog::debug("destroying vulkan renderer");
-    
+
+    vkDestroySurfaceKHR(instance, surface, nullptr);
     vkDestroyInstance(instance, nullptr);
     SDL_DestroyWindow(window);
 }
@@ -43,6 +44,8 @@ void VulkanRenderer::init() {
     initWindow();
     createInstance();
     volkLoadInstance(instance);
+    initSurface();
+    pickPhysicalDevice();
 }
 
 void VulkanRenderer::beginFrame() {
@@ -113,5 +116,41 @@ void VulkanRenderer::createInstance() {
         spdlog::error("failed to initialize instance");
     } else {
         spdlog::debug("instance initialized");
+    }
+}
+
+void VulkanRenderer::initSurface() {
+    if (SDL_Vulkan_CreateSurface(window, instance, &surface) != SDL_TRUE) {
+        spdlog::error("failed to initialize vulkan surface");
+    } else {
+        spdlog::debug("initialized vulkan surface");
+    }
+}
+
+void VulkanRenderer::pickPhysicalDevice() {
+    spdlog::debug("selecting vulkan physical device");
+    uint32_t deviceCount = 0;
+
+    vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
+
+    if (deviceCount == 0) {
+        spdlog::error("no physical devices with vulkan support found");
+    }
+
+    std::vector<VkPhysicalDevice> devices(deviceCount);
+    vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
+
+    for (const auto& device : devices) {
+        if (isDeviceSuitable(device, surface, deviceExtensions)) {
+            physicalDevice = device;
+        }
+        break;
+    }
+
+    if (physicalDevice == VK_NULL_HANDLE) {
+        spdlog::error("failed to pick Vulkan physical device");
+    } else {
+        spdlog::debug("selected Vulkan physical device");
+        logDeviceProperties(physicalDevice);
     }
 }

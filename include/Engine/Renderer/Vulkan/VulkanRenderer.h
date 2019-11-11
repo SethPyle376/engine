@@ -3,9 +3,7 @@
 #include <vector>
 #include <stdexcept>
 
-#include "spdlog/spdlog.h"
-
-#include "volk.h"
+#include "Engine/Renderer/Vulkan/VulkanUtils.h"
 
 #include "SDL2/SDL.h"
 #undef main
@@ -15,6 +13,10 @@
 
 const std::vector<const char*> validationLayers = {
     "VK_LAYER_KHRONOS_validation"
+};
+
+const std::vector<const char*> deviceExtensions = {
+    VK_KHR_SWAPCHAIN_EXTENSION_NAME
 };
 
 class VulkanRenderer {
@@ -32,13 +34,15 @@ private:
     SDL_Window* window;
 
     VkInstance instance;
-
-    VkPhysicalDevice device;
+    VkSurfaceKHR surface;
+    VkPhysicalDevice physicalDevice;
 
     void initSDL();
     void initWindow();
     void initVolk();
     void createInstance();
+    void initSurface();
+    void pickPhysicalDevice();
 public:
     VulkanRenderer(const RendererParams &params);
     ~VulkanRenderer();

@@ -36,6 +36,7 @@ private:
     VkInstance instance;
     VkSurfaceKHR surface;
     VkPhysicalDevice physicalDevice;
+    VkDevice device;
 
     void initSDL();
     void initWindow();
@@ -43,6 +44,7 @@ private:
     void createInstance();
     void initSurface();
     void pickPhysicalDevice();
+    void initLogicalDevice();
 public:
     VulkanRenderer(const RendererParams &params);
     ~VulkanRenderer();

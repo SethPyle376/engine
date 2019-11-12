@@ -7,6 +7,7 @@ VulkanRenderer::VulkanRenderer(const RendererParams &params) {
 VulkanRenderer::~VulkanRenderer() {
     spdlog::debug("destroying vulkan renderer");
 
+    vkDestroyDevice(device, nullptr);
     vkDestroySurfaceKHR(instance, surface, nullptr);
     vkDestroyInstance(instance, nullptr);
     SDL_DestroyWindow(window);
@@ -46,6 +47,7 @@ void VulkanRenderer::init() {
     volkLoadInstance(instance);
     initSurface();
     pickPhysicalDevice();
+    initLogicalDevice();
 }
 
 void VulkanRenderer::beginFrame() {
@@ -152,5 +154,43 @@ void VulkanRenderer::pickPhysicalDevice() {
     } else {
         spdlog::debug("selected Vulkan physical device");
         logDeviceProperties(physicalDevice);
+    }
+}
+
+void VulkanRenderer::initLogicalDevice() {
+    spdlog::debug("initializing vulkan logical device");
+
+    QueueFamilyIndices indices = findQueueFamilies(physicalDevice, surface);
+
+    std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+    std::set<uint32_t> uniqueQueueFamilies = {indices.graphicsFamily.value(), indices.presentFamily.value()};
+
+
+    float queuePriority = 1.0f;
+
+    for (uint32_t queueFamily : uniqueQueueFamilies) {
+        VkDeviceQueueCreateInfo queueCreateInfo = {};
+        queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        queueCreateInfo.queueFamilyIndex = queueFamily;
+        queueCreateInfo.queueCount = 1;
+        queueCreateInfo.pQueuePriorities = &queuePriority;
+        queueCreateInfos.push_back(queueCreateInfo);
+    }
+
+    VkPhysicalDeviceFeatures deviceFeatures = {};
+
+    VkDeviceCreateInfo createInfo = {};
+    createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+    createInfo.pQueueCreateInfos = queueCreateInfos.data();
+    createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
+    createInfo.pEnabledFeatures = &deviceFeatures;
+    createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
+    createInfo.ppEnabledExtensionNames = deviceExtensions.data();
+    createInfo.enabledLayerCount = 0;
+
+    if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS) {
+        spdlog::error("failed to initialize vulkan logical device");
+    } else {
+        spdlog::debug("initialized vulkan logical device");
     }
 }

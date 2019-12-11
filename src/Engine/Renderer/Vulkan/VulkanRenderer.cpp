@@ -91,14 +91,14 @@ void VulkanRenderer::createInstance() {
 
     unsigned int extensionCount;
     if (!SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, NULL)) {
-        //log error
+        spdlog::error("failed to get required vulkan extension count from sdl2");
     }
 
     size_t additional_count = extensions.size();
     extensions.resize(additional_count + extensionCount);
 
     if (!SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, extensions.data() + additional_count)) {
-        //TODO: ERROR HANDLER
+        spdlog::error("failed to get required vulkan extensions from sdl2");
     };
 
     VkInstanceCreateInfo createInfo = {};

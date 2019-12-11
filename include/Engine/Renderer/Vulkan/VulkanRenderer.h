@@ -5,14 +5,14 @@
 
 #include "Engine/Renderer/Vulkan/VulkanUtils.h"
 
-#include "SDL2/SDL.h"
+#include "SDL.h"
 #undef main
 
-#include "SDL2/SDL_vulkan.h"
+#include "SDL_vulkan.h"
 #include "Engine/Renderer/Renderer.h"
 
 const std::vector<const char*> validationLayers = {
-    "VK_LAYER_KHRONOS_validation"
+    "VK_LAYER_LUNARG_standard_validation"
 };
 
 const std::vector<const char*> deviceExtensions = {

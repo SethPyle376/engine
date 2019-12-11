@@ -24,6 +24,7 @@ bool VulkanRenderer::checkValidationLayerSupport() {
         bool layerFound = false;
 
         for (const auto& layerProperties : availableLayers) {
+            spdlog::debug("layer: " + std::string(layerProperties.layerName));
             if (strcmp(layerName, layerProperties.layerName) == 0) {
                 layerFound = true;
                 break;
@@ -75,8 +76,9 @@ void VulkanRenderer::initWindow() {
 
 void VulkanRenderer::createInstance() {
     spdlog::debug("initializing vulkan instance");
-    if (enableValidationLayers && !checkValidationLayerSupport()) {
-        throw std::runtime_error("validation layers unsupported");
+    bool validationLayerSupport = checkValidationLayerSupport();
+    if (enableValidationLayers && !validationLayerSupport) {
+        spdlog::error("validation layers not supported");
     }
 
     VkApplicationInfo appInfo = {};

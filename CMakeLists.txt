@@ -1,7 +1,9 @@
 set(CMAKE_CXX_STANDARD 17)
 cmake_minimum_required(VERSION 3.4.1)
 
+if (UNIX)
 find_package(SDL2 REQUIRED)
+endif (UNIX)
 
 include_directories(include external/Vulkan-Headers/include)
 include_directories(external/SDL2/include)

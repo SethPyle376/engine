@@ -1,3 +1,5 @@
+#pragma once
+
 #include "volk.h"
 #include <optional>
 #include <vector>

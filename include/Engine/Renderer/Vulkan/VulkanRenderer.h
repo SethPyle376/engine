@@ -5,6 +5,8 @@
 
 #include "Engine/Renderer/Vulkan/VulkanUtils.h"
 
+#include "volk.h"
+
 #include "SDL.h"
 #undef main
 

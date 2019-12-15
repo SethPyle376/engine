@@ -3,15 +3,16 @@
 #include <vector>
 #include <stdexcept>
 
-#include "Engine/Renderer/Vulkan/VulkanUtils.h"
-
 #include "volk.h"
 
 #include "SDL.h"
 #undef main
-
 #include "SDL_vulkan.h"
+
 #include "Engine/Renderer/Renderer.h"
+
+#include "Engine/Renderer/Vulkan/VulkanUtils.h"
+#include "Engine/Renderer/Vulkan/VulkanDevice.h"
 
 const std::vector<const char*> validationLayers = {
     "VK_LAYER_LUNARG_standard_validation"

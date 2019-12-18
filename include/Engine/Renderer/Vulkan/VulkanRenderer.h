@@ -38,15 +38,16 @@ private:
 
     VkInstance instance;
     VkSurfaceKHR surface;
-    VkPhysicalDevice physicalDevice;
-    VkDevice device;
+    VulkanDevice* device;
+
+    VkPhysicalDeviceFeatures deviceFeatures = {};
 
     void initSDL();
     void initWindow();
     void initVolk();
     void createInstance();
     void initSurface();
-    void pickPhysicalDevice();
+    VkPhysicalDevice pickPhysicalDevice();
     void initLogicalDevice();
 public:
     VulkanRenderer(const RendererParams &params);

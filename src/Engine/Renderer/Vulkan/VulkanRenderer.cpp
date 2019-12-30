@@ -8,7 +8,7 @@ VulkanRenderer::~VulkanRenderer() {
     spdlog::debug("destroying vulkan renderer");
 
     delete device;
-    vkDestroySurfaceKHR(instance, surface, nullptr);
+    delete swapchain;
     vkDestroyInstance(instance, nullptr);
     SDL_DestroyWindow(window);
 }
@@ -45,8 +45,9 @@ void VulkanRenderer::init() {
     initVolk();
     initWindow();
     createInstance();
+    swapchain = new VulkanSwapchain(instance);
+    swapchain->initSurface(window);
     volkLoadInstance(instance);
-    initSurface();
     device = new VulkanDevice(pickPhysicalDevice());
     device->createLogicalDevice(deviceFeatures, deviceExtensions, nullptr);
 }
@@ -123,12 +124,8 @@ void VulkanRenderer::createInstance() {
     }
 }
 
-void VulkanRenderer::initSurface() {
-    if (SDL_Vulkan_CreateSurface(window, instance, &surface) != SDL_TRUE) {
-        spdlog::error("failed to initialize vulkan surface");
-    } else {
-        spdlog::debug("initialized vulkan surface");
-    }
+void VulkanRenderer::initSwapchain() {
+    swapchain->initSurface(window);
 }
 
 VkPhysicalDevice VulkanRenderer::pickPhysicalDevice() {
@@ -148,7 +145,7 @@ VkPhysicalDevice VulkanRenderer::pickPhysicalDevice() {
     vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
 
     for (const auto& device : devices) {
-        if (isDeviceSuitable(device, surface, deviceExtensions)) {
+        if (isDeviceSuitable(device, swapchain->getSurface(), deviceExtensions)) {
             physicalDevice = device;
         }
         break;

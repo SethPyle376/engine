@@ -13,6 +13,7 @@
 
 #include "Engine/Renderer/Vulkan/VulkanUtils.h"
 #include "Engine/Renderer/Vulkan/VulkanDevice.h"
+#include "Engine/Renderer/Vulkan/VulkanSwapchain.h"
 
 const std::vector<const char*> validationLayers = {
     "VK_LAYER_LUNARG_standard_validation"
@@ -37,8 +38,9 @@ private:
     SDL_Window* window;
 
     VkInstance instance;
-    VkSurfaceKHR surface;
+
     VulkanDevice* device;
+    VulkanSwapchain* swapchain;
 
     VkPhysicalDeviceFeatures deviceFeatures = {};
 
@@ -46,7 +48,7 @@ private:
     void initWindow();
     void initVolk();
     void createInstance();
-    void initSurface();
+    void initSwapchain();
     VkPhysicalDevice pickPhysicalDevice();
     void initLogicalDevice();
 public:

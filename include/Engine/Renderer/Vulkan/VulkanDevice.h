@@ -211,5 +211,13 @@ public:
 
         return result;
     }
+
+    VkPhysicalDevice getPhysicalDevice() {
+        return physicalDevice;
+    }
+
+    VkDevice getDevice() {
+        return logicalDevice;
+    }
 };
 

@@ -7,8 +7,8 @@ VulkanRenderer::VulkanRenderer(const RendererParams &params) {
 VulkanRenderer::~VulkanRenderer() {
     spdlog::debug("destroying vulkan renderer");
 
-    delete device;
     delete swapchain;
+    delete device;
     vkDestroyInstance(instance, nullptr);
     SDL_DestroyWindow(window);
 }

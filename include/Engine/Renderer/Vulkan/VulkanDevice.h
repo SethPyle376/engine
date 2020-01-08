@@ -57,6 +57,7 @@ class VulkanDevice {
                 break;
             }
         }
+        return 0;
     }
 
     bool extensionSupported(std::string extension) {

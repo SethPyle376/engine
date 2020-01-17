@@ -8,5 +8,5 @@
 class ResourceFactory {
 public:
     std::string resourceType = "none";
-    virtual Resource load(const std::string &path) = 0;
+    virtual std::shared_ptr<Resource> load(const std::string &path) = 0;
 };

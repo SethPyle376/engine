@@ -14,8 +14,9 @@ include_directories(external/rapidjson/include/rapidjson)
 
 file(GLOB MAINSOURCES src/*.cpp)
 file(GLOB RENDERSOURCES src/Engine/Renderer/*/*.cpp src/Engine/Renderer/*/*/*.cpp)
+file(GLOB RESOURCESOURCES src/Engine/Resources/*)
 
-set(SOURCE_FILES ${MAINSOURCES} ${RENDERSOURCES})
+set(SOURCE_FILES ${MAINSOURCES} ${RENDERSOURCES} ${RESOURCESOURCES})
 
 add_executable(Application ${SOURCE_FILES})
 

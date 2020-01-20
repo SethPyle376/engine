@@ -23,6 +23,4 @@ public:
 
     void setResourceType(RESOURCE_TYPE type) { this->type = type; }
     RESOURCE_TYPE getResourceType() { return type; }
-
-    virtual void load() = 0;
 };

@@ -20,6 +20,7 @@ private:
 public:
     ResourceManager();
 
+    void registerFactory(ResourceFactory* factory);
+
     std::shared_ptr<Resource> getResource(std::string filepath);
-    
 };

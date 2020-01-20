@@ -4,6 +4,10 @@ ResourceManager::ResourceManager() {
     resourceMap = std::unordered_map<std::string, std::weak_ptr<Resource>>();
 }
 
+void ResourceManager::registerFactory(ResourceFactory* factory) {
+    factoryMap[factory->resourceType] = std::unique_ptr<ResourceFactory>(factory);
+}
+
 std::shared_ptr<Resource> ResourceManager::loadResource(std::string filepath) {
     SDL_RWops *sdlFile = SDL_RWFromFile(filepath.c_str(), "rb");
 
@@ -13,8 +17,9 @@ std::shared_ptr<Resource> ResourceManager::loadResource(std::string filepath) {
 
     SDL_RWclose(sdlFile);
 
+    char* testjson = "{\"type\":\"mock\"}";
     rapidjson::Document document;
-    document.Parse(buffer.data());
+    document.Parse(testjson);
 
     std::string resourceType =  document["type"].GetString();
     std::shared_ptr<Resource> resource = (factoryMap[resourceType]->load(filepath));
@@ -26,8 +31,9 @@ std::shared_ptr<Resource> ResourceManager::getResource(std::string filepath) {
     std::unordered_map<std::string, std::weak_ptr<Resource>>::iterator it = resourceMap.find(filepath);
 
     if (it != resourceMap.end()) {
-        return resourceMap[filepath].lock();
-    } else {
-        return loadResource(filepath);
+        if (!resourceMap[filepath].expired()) {
+            return resourceMap[filepath].lock();
+        }
     }
+    return loadResource(filepath);
 }

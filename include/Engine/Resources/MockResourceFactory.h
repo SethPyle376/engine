@@ -14,7 +14,7 @@ public:
 
     virtual std::shared_ptr<Resource> load(const std::string &path) {
         std::string pathCopy = path;
-        std::shared_ptr<MockResource> ptr(new MockResource(pathCopy));
+        std::shared_ptr<MockResource> ptr(new MockResource());
         return std::static_pointer_cast<Resource>(ptr);
     }
 };

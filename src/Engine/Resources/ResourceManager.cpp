@@ -11,15 +11,20 @@ void ResourceManager::registerFactory(ResourceFactory* factory) {
 std::shared_ptr<Resource> ResourceManager::loadResource(std::string filepath) {
     SDL_RWops *sdlFile = SDL_RWFromFile(filepath.c_str(), "rb");
 
+    if (sdlFile == nullptr) {
+        spdlog::error(SDL_GetError());
+    }
+
     int size = SDL_RWsize(sdlFile);
     std::vector<char> buffer(size);
     SDL_RWread(sdlFile, buffer.data(), size, 1);
 
     SDL_RWclose(sdlFile);
 
-    const char *testjson = "{\"type\":\"mock\"}";
+    std::string resourceData(buffer.begin(), buffer.end());
+
     rapidjson::Document document;
-    document.Parse(testjson);
+    document.Parse(resourceData.c_str());
 
     std::string resourceType =  document["type"].GetString();
     std::shared_ptr<Resource> resource = (factoryMap[resourceType]->load(filepath));

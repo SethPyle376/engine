@@ -121,6 +121,8 @@ public:
         //Fallback if no non-vsync options and no vsync requested
         VkPresentModeKHR swapchainPresentMode = VK_PRESENT_MODE_FIFO_KHR;
 
+        spdlog::debug("Present Mode Count: {0}", presentModeCount);
+
         if (!vsync) {
             for (size_t i = 0; i < presentModeCount; i++) {
                 if (presentModes[i] == VK_PRESENT_MODE_MAILBOX_KHR) {
@@ -129,6 +131,7 @@ public:
                     break;
                 }
                 if ((swapchainPresentMode != VK_PRESENT_MODE_MAILBOX_KHR) && (presentModes[i] == VK_PRESENT_MODE_IMMEDIATE_KHR)) {
+                    spdlog::debug("selecting immediate present mode");
 					swapchainPresentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
 				}
             }

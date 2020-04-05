@@ -117,6 +117,7 @@ public:
         }
     }
 
+    // TODO: Consider using explicit transfer queue
     VkResult createLogicalDevice(VkPhysicalDeviceFeatures enabledFeatures, std::vector<const char*> enabledExtensions,
                                     void* pNextChain, bool useSwapChain = true, VkQueueFlags requestedQueueTypes = VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT) {
         std::vector<VkDeviceQueueCreateInfo> queueCreateInfos{};

@@ -2,14 +2,17 @@
 
 #include "SDL.h"
 #include "spdlog/spdlog.h"
-
+#include "volk.h"
 #include "Engine/Resources/Resource.h"
 
 class VulkanShaderResource : public Resource {
 private:
+    VkShaderModule createShaderModule(const char* code);
 
 public:
-    VulkanShaderResource(std::string filename) : Resource(filename) {};
+    VulkanShaderResource(const char* vertexCode, const char* fragmentCode) {
+        load(vertexCode, fragmentCode);
+    };
 
-    void load();
+    void load(const char* vertexCode, const char* fragmentCode);
 };

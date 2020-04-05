@@ -7,6 +7,7 @@
 
 #include "SDL.h"
 #include "document.h"
+#include "spdlog/spdlog.h"
 
 #include "Engine/Resources/Resource.h"
 #include "Engine/Resources/ResourceFactory.h"

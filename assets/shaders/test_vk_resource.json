@@ -1,0 +1,6 @@
+{
+    "type": "vulkan_shader",
+    "name": "my-test-vk-shader",
+    "vertex_code": "hello world",
+    "fragment_code": "hello world"
+}

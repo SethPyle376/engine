@@ -9,7 +9,7 @@ class VulkanShaderResource : public Resource {
 private:
 
 public:
-    VulkanShaderResource::VulkanShaderResource(std::string filename) : Resource(filename) {};
+    VulkanShaderResource(std::string filename) : Resource(filename) {};
 
     void load();
 };

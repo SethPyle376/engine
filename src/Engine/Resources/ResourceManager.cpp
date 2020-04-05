@@ -17,7 +17,7 @@ std::shared_ptr<Resource> ResourceManager::loadResource(std::string filepath) {
 
     SDL_RWclose(sdlFile);
 
-    char* testjson = "{\"type\":\"mock\"}";
+    const char *testjson = "{\"type\":\"mock\"}";
     rapidjson::Document document;
     document.Parse(testjson);
 

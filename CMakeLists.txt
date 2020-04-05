@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.4.1)
 
 if (UNIX)
 find_package(SDL2 REQUIRED)
+include_directories(${SDL2_INCLUDE_DIRS})
 endif (UNIX)
 
 include_directories(include external/Vulkan-Headers/include)
@@ -27,7 +28,6 @@ endif (WIN32)
 
 if (UNIX)
 target_link_libraries(Application ${CMAKE_DL_LIBS})
-target_link_libraries( Application SDL2::SDL2 )
 endif (UNIX)
 
 add_subdirectory(external/volk)

@@ -58,4 +58,6 @@ public:
     void init();
     void beginFrame();
     void endFrame();
+
+    VkDevice getLogicalDevice();
 };

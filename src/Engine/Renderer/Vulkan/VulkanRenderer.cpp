@@ -162,3 +162,7 @@ VkPhysicalDevice VulkanRenderer::pickPhysicalDevice() {
     }
     return physicalDevice;
 }
+
+VkDevice VulkanRenderer::getLogicalDevice() {
+    return device->getDevice();
+}

@@ -1,23 +1,26 @@
 #include "Engine/Renderer/Vulkan/VulkanRenderer.h"
-#include "Engine/Renderer/Vulkan/Resources/VulkanShaderResource.h"
+#include "Engine/Renderer/Vulkan/Resources/VulkanPipelineResource.h"
 
 #include "Engine/Resources/ResourceManager.h"
 #include "Engine/Resources/MockResourceFactory.h"
-#include "Engine/Renderer/Vulkan/Resources/VulkanShaderResourceFactory.h"
+#include "Engine/Renderer/Vulkan/Resources/VulkanPipelineResourceFactory.h"
 
 int main() {
 	ResourceFactory* mockFactory = new MockResourceFactory();
-	VulkanShaderResourceFactory* vulkanFactory = new VulkanShaderResourceFactory();
+
 
 	ResourceManager resourceManager;
 	resourceManager.registerFactory(mockFactory);
-	resourceManager.registerFactory(vulkanFactory);
 	
     RendererParams params;
     params.x = 1080;
     params.y = 720;
     VulkanRenderer vulkanRenderer = VulkanRenderer(params);
     vulkanRenderer.init();
+
+	VulkanPipelineResourceFactory* vulkanFactory = new VulkanPipelineResourceFactory(vulkanRenderer.getLogicalDevice());
+	resourceManager.registerFactory(vulkanFactory);
+
     bool quit = false;
 	SDL_Event e;
 

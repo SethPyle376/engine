@@ -8,6 +8,7 @@
 class VulkanPipelineResourceFactory : public ResourceFactory {
 private:
     VkDevice device;
+    RendererParams params;
 
     std::vector<char> readSpirv(const std::string &path) {
         SDL_RWops *sdlFile = SDL_RWFromFile(path.c_str(), "rb");
@@ -22,9 +23,10 @@ private:
     }
 
 public:
-    VulkanPipelineResourceFactory(VkDevice device) {
+    VulkanPipelineResourceFactory(VkDevice device, RendererParams params) {
         this->device = device;
         this->resourceType = "vulkan_shader";
+        this->params = params;
     }
 
     std::shared_ptr<Resource> load(const std::string &path) {
@@ -46,7 +48,7 @@ public:
         std::vector<char> vertCode = readSpirv(document["vertex_code"].GetString());
         std::vector<char> fragCode = readSpirv(document["fragment_code"].GetString());
 
-        std::shared_ptr<VulkanPipelineResource> ptr(new VulkanPipelineResource(device, vertCode, fragCode));
+        std::shared_ptr<VulkanPipelineResource> ptr(new VulkanPipelineResource(device, params, vertCode, fragCode));
         return std::static_pointer_cast<Resource>(ptr);
     }
 };

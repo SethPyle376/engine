@@ -16,6 +16,7 @@ VkShaderModule VulkanPipelineResource::createShaderModule(const std::vector<char
 }
 
 VulkanPipelineResource::~VulkanPipelineResource() {
+    vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
     for (int i = 0; i < createdModules.size(); i++) {
         vkDestroyShaderModule(device, createdModules[i], nullptr);
     }

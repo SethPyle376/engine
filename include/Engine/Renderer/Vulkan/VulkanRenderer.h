@@ -44,6 +44,8 @@ private:
 
     VkPhysicalDeviceFeatures deviceFeatures = {};
 
+    VkRenderPass renderPass;
+
     void initSDL();
     void initWindow();
     void initVolk();
@@ -51,6 +53,7 @@ private:
     void initSwapchain();
     VkPhysicalDevice pickPhysicalDevice();
     void initLogicalDevice();
+    void initRenderPass();
 public:
     VulkanRenderer(const RendererParams &params);
     ~VulkanRenderer();
@@ -60,4 +63,5 @@ public:
     void endFrame();
 
     VkDevice getLogicalDevice();
+    VkRenderPass getRenderPass();
 };

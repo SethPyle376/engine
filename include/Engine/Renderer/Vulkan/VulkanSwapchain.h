@@ -247,4 +247,8 @@ public:
     VkSurfaceKHR getSurface() {
         return surface;
     }
+
+    VkFormat getImageFormat() {
+        return colorFormat;
+    }
 };

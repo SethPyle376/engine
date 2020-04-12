@@ -16,11 +16,13 @@ private:
 
     VkRenderPass renderPass;
     VkPipelineLayout pipelineLayout;
+    VkPipeline graphicsPipeline;
 
 public:
-    VulkanPipelineResource(VkDevice device, RendererParams params, const std::vector<char> &vertexCode, const std::vector<char> &fragmentCode) {
+    VulkanPipelineResource(VkDevice device, RendererParams params, VkRenderPass renderPass, const std::vector<char> &vertexCode, const std::vector<char> &fragmentCode) {
         this->params = params;
         this->device = device;
+        this->renderPass = renderPass;
         load(vertexCode, fragmentCode);
     };
 

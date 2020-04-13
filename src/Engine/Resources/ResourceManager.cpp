@@ -1,5 +1,7 @@
 #include "Engine/Resources/ResourceManager.h"
 
+ResourceManager* ResourceManager::instance = 0;
+
 ResourceManager::ResourceManager() {
     resourceMap = std::unordered_map<std::string, std::weak_ptr<Resource>>();
 }
@@ -41,4 +43,11 @@ std::shared_ptr<Resource> ResourceManager::getResource(std::string filepath) {
         }
     }
     return loadResource(filepath);
+}
+
+ResourceManager* ResourceManager::getInstance() {
+    if (instance == 0) {
+        instance = new ResourceManager();
+    }
+    return instance;
 }

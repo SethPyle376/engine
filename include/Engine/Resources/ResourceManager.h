@@ -14,6 +14,7 @@
 
 class ResourceManager {
 private:
+    static ResourceManager* instance;
     std::unordered_map<std::string, std::weak_ptr<Resource>> resourceMap;
     std::unordered_map<std::string, std::unique_ptr<ResourceFactory>> factoryMap;
 
@@ -25,4 +26,7 @@ public:
     void registerFactory(ResourceFactory* factory);
 
     std::shared_ptr<Resource> getResource(std::string filepath);
+
+    static ResourceManager* getInstance();
 };
+

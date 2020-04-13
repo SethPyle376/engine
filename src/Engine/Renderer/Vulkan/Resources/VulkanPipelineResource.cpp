@@ -149,3 +149,7 @@ void VulkanPipelineResource::load(const std::vector<char> &vertexCode, const std
         spdlog::debug("created graphics pipeline");
     }
 }
+
+VkPipeline VulkanPipelineResource::getPipeline() {
+    return graphicsPipeline;
+}

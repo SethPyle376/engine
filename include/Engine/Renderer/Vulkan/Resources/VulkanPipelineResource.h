@@ -29,4 +29,6 @@ public:
     ~VulkanPipelineResource();
 
     void load(const std::vector<char> &vertexCode, const std::vector<char> &fragmentCode);
+
+    VkPipeline getPipeline();
 };

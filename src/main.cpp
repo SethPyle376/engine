@@ -8,9 +8,7 @@
 int main() {
 	ResourceFactory* mockFactory = new MockResourceFactory();
 
-
-	ResourceManager resourceManager;
-	resourceManager.registerFactory(mockFactory);
+	ResourceManager* resourceManager = ResourceManager::getInstance();
 	
     RendererParams params;
     params.x = 1080;
@@ -19,12 +17,12 @@ int main() {
     vulkanRenderer.init();
 
 	VulkanPipelineResourceFactory* vulkanFactory = new VulkanPipelineResourceFactory(vulkanRenderer.getLogicalDevice(), params, vulkanRenderer.getRenderPass());
-	resourceManager.registerFactory(vulkanFactory);
+	resourceManager->registerFactory(vulkanFactory);
 
     bool quit = false;
 	SDL_Event e;
 
-	std::shared_ptr<Resource> vulkanShaderResource = resourceManager.getResource("assets/shaders/test_vk_resource.json");
+	std::shared_ptr<Resource> vulkanShaderResource = resourceManager->getResource("assets/shaders/test_vk_resource.json");
 
 	while (!quit) {
 		vulkanRenderer.beginFrame();

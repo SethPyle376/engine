@@ -23,6 +23,7 @@ int main() {
 	SDL_Event e;
 
 	std::shared_ptr<Resource> vulkanShaderResource = resourceManager->getResource("assets/shaders/test_vk_resource.json");
+	std::shared_ptr<Resource> vulkanShaderResource2 = resourceManager->getResource("assets/shaders/test_vk_resource2.json");
 
 	while (!quit) {
 		vulkanRenderer.beginFrame();

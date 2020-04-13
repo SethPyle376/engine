@@ -15,6 +15,8 @@
 #include "Engine/Renderer/Vulkan/VulkanDevice.h"
 #include "Engine/Renderer/Vulkan/VulkanSwapchain.h"
 
+#include "Engine/Resources/ResourceManager.h"
+
 const std::vector<const char*> validationLayers = {
     "VK_LAYER_LUNARG_standard_validation"
 };
@@ -25,6 +27,7 @@ const std::vector<const char*> deviceExtensions = {
 
 class VulkanRenderer {
 private:
+    ResourceManager* resourceManager;
     #ifdef NDEBUG
         const bool enableValidationLayers = false;
         std::vector<const char*> extensions;

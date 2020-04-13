@@ -26,6 +26,7 @@ public:
     void registerFactory(ResourceFactory* factory);
 
     std::shared_ptr<Resource> getResource(std::string filepath);
+    std::vector<std::shared_ptr<Resource>> getResources(RESOURCE_TYPE type);
 
     static ResourceManager* getInstance();
 };

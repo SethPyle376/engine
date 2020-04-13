@@ -45,6 +45,20 @@ std::shared_ptr<Resource> ResourceManager::getResource(std::string filepath) {
     return loadResource(filepath);
 }
 
+std::vector<std::shared_ptr<Resource>> ResourceManager::getResources(RESOURCE_TYPE type) {
+    std::unordered_map<std::string, std::weak_ptr<Resource>>::iterator it = resourceMap.begin();
+    std::vector<std::shared_ptr<Resource>> resources;
+    for (it; it != resourceMap.end(); it++) {
+        if (!it->second.expired()) {
+            std::shared_ptr<Resource> resource = it->second.lock();
+            if (resource->getResourceType() == type) {
+                resources.push_back(resource);
+            }
+        }
+    }
+    return resources;
+}
+
 ResourceManager* ResourceManager::getInstance() {
     if (instance == 0) {
         instance = new ResourceManager();

@@ -2,6 +2,7 @@
 
 VulkanRenderer::VulkanRenderer(const RendererParams &params) {
     this->params = params;
+    resourceManager = ResourceManager::getInstance();
 }
 
 VulkanRenderer::~VulkanRenderer() {

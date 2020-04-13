@@ -1,0 +1,6 @@
+{
+    "type": "vulkan_shader",
+    "name": "my-test-vk-shader",
+    "vertex_code": "assets/shaders/vertex/test_vert.spv",
+    "fragment_code": "assets/shaders/fragment/test_frag.spv"
+}

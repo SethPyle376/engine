@@ -51,6 +51,7 @@ public:
         std::vector<char> fragCode = readSpirv(document["fragment_code"].GetString());
 
         std::shared_ptr<VulkanPipelineResource> ptr(new VulkanPipelineResource(device, params, renderPass, vertCode, fragCode));
+        ptr->setResourceType(RESOURCE_VULKAN_PIPELINE);
         return std::static_pointer_cast<Resource>(ptr);
     }
 };

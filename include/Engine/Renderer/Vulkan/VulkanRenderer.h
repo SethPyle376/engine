@@ -48,6 +48,8 @@ private:
 
     std::vector<VulkanFramebuffer> framebuffers;
 
+    VkCommandPool commandPool;
+
     VkPhysicalDeviceFeatures deviceFeatures = {};
 
     VkRenderPass renderPass;
@@ -61,6 +63,7 @@ private:
     void initLogicalDevice();
     void initRenderPass();
     void initFramebuffers();
+    void initCommandPool();
 public:
     VulkanRenderer(const RendererParams &params);
     ~VulkanRenderer();

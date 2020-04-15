@@ -177,7 +177,6 @@ public:
         swapchainCI.imageArrayLayers = 1;
         swapchainCI.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
         swapchainCI.queueFamilyIndexCount = 0;
-        swapchainCI.queueFamilyIndexCount = 0;
         swapchainCI.pQueueFamilyIndices = nullptr;
         swapchainCI.presentMode = swapchainPresentMode;
         swapchainCI.oldSwapchain = oldSwapchain;

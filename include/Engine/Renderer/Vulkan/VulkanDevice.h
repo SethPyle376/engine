@@ -18,12 +18,6 @@ class VulkanDevice {
 
     bool enableDebugMarkers = false;
 
-    struct {
-        uint32_t graphics;
-        uint32_t compute;
-        uint32_t transfer;
-    } queueFamilyIndices;
-
     uint32_t getQueueFamilyIndex(VkQueueFlagBits queueFlags) {
         if (queueFlags & VK_QUEUE_COMPUTE_BIT)
         {
@@ -81,6 +75,12 @@ class VulkanDevice {
     }
 
 public:
+
+    struct {
+        uint32_t graphics;
+        uint32_t compute;
+        uint32_t transfer;
+    } queueFamilyIndices;
 
     VulkanDevice(VkPhysicalDevice physicalDevice) {
         this->physicalDevice = physicalDevice;

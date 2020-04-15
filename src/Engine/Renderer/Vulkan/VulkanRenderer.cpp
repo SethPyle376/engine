@@ -8,6 +8,8 @@ VulkanRenderer::VulkanRenderer(const RendererParams &params) {
 VulkanRenderer::~VulkanRenderer() {
     spdlog::debug("destroying vulkan renderer");
 
+    vkDestroyCommandPool(device->getDevice(), commandPool, nullptr);
+
     framebuffers.erase(framebuffers.begin(), framebuffers.end());
 
     vkDestroyRenderPass(device->getDevice(), renderPass, nullptr);
@@ -59,6 +61,7 @@ void VulkanRenderer::init() {
     swapchain->create(params.x, params.y);
     initRenderPass();
     initFramebuffers();
+    initCommandPool();
 }
 
 void VulkanRenderer::beginFrame() {
@@ -230,7 +233,20 @@ void VulkanRenderer::initFramebuffers() {
         if (vkCreateFramebuffer(device->getDevice(), &framebufferInfo, nullptr, &(framebuffers.at(i).framebuffer)) != VK_SUCCESS) {
             spdlog::error("failed to create framebuffer");
         } else {
-            spdlog::debug("created framebuffer");
+            spdlog::debug("created vulkan framebuffer");
         }
+    }
+}
+
+void VulkanRenderer::initCommandPool() {
+    VkCommandPoolCreateInfo commandPoolInfo = {};
+    commandPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+    commandPoolInfo.queueFamilyIndex = device->queueFamilyIndices.graphics;
+    commandPoolInfo.flags = 0;
+
+    if (vkCreateCommandPool(device->getDevice(), &commandPoolInfo, nullptr, &commandPool) != VK_SUCCESS) {
+        spdlog::error("failed to create command pool");
+    } else {
+        spdlog::debug("vulkan command pool created successfully");
     }
 }

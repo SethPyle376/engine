@@ -14,6 +14,7 @@
 #include "Engine/Renderer/Vulkan/VulkanUtils.h"
 #include "Engine/Renderer/Vulkan/VulkanDevice.h"
 #include "Engine/Renderer/Vulkan/VulkanSwapchain.h"
+#include "Engine/Renderer/Vulkan/VulkanFramebuffer.h"
 
 #include "Engine/Resources/ResourceManager.h"
 
@@ -45,6 +46,8 @@ private:
     VulkanDevice* device;
     VulkanSwapchain* swapchain;
 
+    std::vector<VulkanFramebuffer> framebuffers;
+
     VkPhysicalDeviceFeatures deviceFeatures = {};
 
     VkRenderPass renderPass;
@@ -57,6 +60,7 @@ private:
     VkPhysicalDevice pickPhysicalDevice();
     void initLogicalDevice();
     void initRenderPass();
+    void initFramebuffers();
 public:
     VulkanRenderer(const RendererParams &params);
     ~VulkanRenderer();

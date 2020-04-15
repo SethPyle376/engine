@@ -251,4 +251,8 @@ public:
     VkFormat getImageFormat() {
         return colorFormat;
     }
+
+    std::vector<SwapChainBuffer>* getSwapChainBuffers() {
+        return &buffers;
+    }
 };

@@ -8,6 +8,8 @@ VulkanRenderer::VulkanRenderer(const RendererParams &params) {
 VulkanRenderer::~VulkanRenderer() {
     spdlog::debug("destroying vulkan renderer");
 
+    framebuffers.erase(framebuffers.begin(), framebuffers.end());
+
     vkDestroyRenderPass(device->getDevice(), renderPass, nullptr);
 
     delete swapchain;
@@ -56,6 +58,7 @@ void VulkanRenderer::init() {
     swapchain->connect(device->getPhysicalDevice(), device->getDevice());
     swapchain->create(params.x, params.y);
     initRenderPass();
+    initFramebuffers();
 }
 
 void VulkanRenderer::beginFrame() {
@@ -206,5 +209,28 @@ void VulkanRenderer::initRenderPass() {
         spdlog::error("failed to create render pass");
     } else {
         spdlog::debug("created render pass");
+    }
+}
+
+void VulkanRenderer::initFramebuffers() {
+    std::vector<SwapChainBuffer>* buffers = swapchain->getSwapChainBuffers();
+    this->framebuffers.resize(buffers->size(), VulkanFramebuffer(device->getDevice()));
+
+    spdlog::debug("creating {0} framebuffers", buffers->size());
+    for (int i = 0; i < buffers->size(); i++) {
+        VkFramebufferCreateInfo framebufferInfo = {};
+        framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+        framebufferInfo.renderPass = this->renderPass;
+        framebufferInfo.attachmentCount = 1;
+        framebufferInfo.pAttachments = &(buffers->at(i).view);
+        framebufferInfo.width = params.x;
+        framebufferInfo.height = params.y;
+        framebufferInfo.layers = 1;
+
+        if (vkCreateFramebuffer(device->getDevice(), &framebufferInfo, nullptr, &(framebuffers.at(i).framebuffer)) != VK_SUCCESS) {
+            spdlog::error("failed to create framebuffer");
+        } else {
+            spdlog::debug("created framebuffer");
+        }
     }
 }

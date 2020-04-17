@@ -8,7 +8,10 @@ VulkanRenderer::VulkanRenderer(const RendererParams &params) {
 VulkanRenderer::~VulkanRenderer() {
     spdlog::debug("destroying vulkan renderer");
 
-    vkDestroyCommandPool(device->getDevice(), commandPool, nullptr);
+    vkDeviceWaitIdle(device->getDevice());
+
+    vkDestroySemaphore(device->getDevice(), imageAvailableSemaphore, nullptr);
+    vkDestroySemaphore(device->getDevice(), renderFinishedSemaphore, nullptr);
 
     framebuffers.erase(framebuffers.begin(), framebuffers.end());
 
@@ -61,8 +64,8 @@ void VulkanRenderer::init() {
     swapchain->create(params.x, params.y);
     initRenderPass();
     initFramebuffers();
-    initCommandPool();
     initCommandBuffers();
+    initSemaphores();
 }
 
 void VulkanRenderer::buildCommandbuffers() {
@@ -110,7 +113,46 @@ void VulkanRenderer::beginFrame() {
     return;
 }
 
-void VulkanRenderer::endFrame() {
+void VulkanRenderer::drawFrame() {
+    uint32_t imageIndex;
+
+    vkAcquireNextImageKHR(device->getDevice(), swapchain->getSwapchain(), UINT64_MAX, imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
+
+    VkSubmitInfo submitInfo = {};
+    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+    VkSemaphore waitSemaphores[] = {imageAvailableSemaphore};
+    VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+
+    submitInfo.waitSemaphoreCount = 1;
+    submitInfo.pWaitSemaphores = waitSemaphores;
+    submitInfo.pWaitDstStageMask = waitStages;
+    
+    submitInfo.commandBufferCount = 1;
+    submitInfo.pCommandBuffers = &commandBuffers[imageIndex];
+
+    VkSemaphore signalSemaphores[] = { renderFinishedSemaphore };
+    submitInfo.signalSemaphoreCount = 1;
+    submitInfo.pSignalSemaphores = signalSemaphores;
+
+    if (vkQueueSubmit(device->getGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE) != VK_SUCCESS) {
+        spdlog::error("error submitting vulkan queue");
+    }
+
+    VkPresentInfoKHR presentInfo = {};
+    presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+    presentInfo.waitSemaphoreCount = 1;
+    presentInfo.pWaitSemaphores = signalSemaphores;
+
+    VkSwapchainKHR swapchains[] = {swapchain->getSwapchain()};
+    presentInfo.swapchainCount = 1;
+    presentInfo.pSwapchains = swapchains;
+    presentInfo.pImageIndices = &imageIndex;
+
+    vkQueuePresentKHR(device->getGraphicsQueue(), &presentInfo);
+
+    vkQueueWaitIdle(device->getGraphicsQueue());
+
     return;
 }
 
@@ -243,12 +285,22 @@ void VulkanRenderer::initRenderPass() {
     subpass.colorAttachmentCount = 1;
     subpass.pColorAttachments = &colorAttachmentRef;
 
+    VkSubpassDependency dependency = {};
+    dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+    dependency.dstSubpass = 0;
+    dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependency.srcAccessMask = 0;
+    dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
     VkRenderPassCreateInfo renderPassInfo = {};
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
     renderPassInfo.attachmentCount = 1;
     renderPassInfo.pAttachments = &colorAttachment;
     renderPassInfo.subpassCount = 1;
     renderPassInfo.pSubpasses = &subpass;
+    renderPassInfo.dependencyCount = 1;
+    renderPassInfo.pDependencies = &dependency;
 
     if (vkCreateRenderPass(device->getDevice(), &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
         spdlog::error("failed to create render pass");
@@ -280,25 +332,12 @@ void VulkanRenderer::initFramebuffers() {
     }
 }
 
-void VulkanRenderer::initCommandPool() {
-    VkCommandPoolCreateInfo commandPoolInfo = {};
-    commandPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-    commandPoolInfo.queueFamilyIndex = device->queueFamilyIndices.graphics;
-    commandPoolInfo.flags = 0;
-
-    if (vkCreateCommandPool(device->getDevice(), &commandPoolInfo, nullptr, &commandPool) != VK_SUCCESS) {
-        spdlog::error("failed to create command pool");
-    } else {
-        spdlog::debug("vulkan command pool created successfully");
-    }
-}
-
 void VulkanRenderer::initCommandBuffers() {
     commandBuffers.resize(framebuffers.size());
 
     VkCommandBufferAllocateInfo allocInfo = {};
     allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-    allocInfo.commandPool = commandPool;
+    allocInfo.commandPool = device->getCommandPool();
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     allocInfo.commandBufferCount = commandBuffers.size();
 
@@ -306,5 +345,17 @@ void VulkanRenderer::initCommandBuffers() {
         spdlog::error("failed to allocate command buffers");
     } else {
         spdlog::debug("allocated vulkan command buffers");
+    }
+}
+
+void VulkanRenderer::initSemaphores() {
+    VkSemaphoreCreateInfo semaphoreCreateInfo = {};
+    semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+    if (vkCreateSemaphore(device->getDevice(), &semaphoreCreateInfo, nullptr, &imageAvailableSemaphore) != VK_SUCCESS ||
+        vkCreateSemaphore(device->getDevice(), &semaphoreCreateInfo, nullptr, &renderFinishedSemaphore) != VK_SUCCESS) {
+            spdlog::error("failed to create vulkan semaphores");
+    } else {
+        spdlog::debug("created vulkan semaphores");
     }
 }

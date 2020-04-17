@@ -243,6 +243,10 @@ public:
         }
     }
 
+    VkSwapchainKHR getSwapchain() {
+        return swapchain;
+    }
+
     VkSurfaceKHR getSurface() {
         return surface;
     }

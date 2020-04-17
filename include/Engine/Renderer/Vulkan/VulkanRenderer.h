@@ -48,13 +48,15 @@ private:
     VulkanSwapchain* swapchain;
 
     std::vector<VulkanFramebuffer> framebuffers;
-
-    VkCommandPool commandPool;
+    
     std::vector<VkCommandBuffer> commandBuffers;
 
     VkPhysicalDeviceFeatures deviceFeatures = {};
 
     VkRenderPass renderPass;
+
+    VkSemaphore imageAvailableSemaphore;
+    VkSemaphore renderFinishedSemaphore;
 
     void initSDL();
     void initWindow();
@@ -65,15 +67,15 @@ private:
     void initLogicalDevice();
     void initRenderPass();
     void initFramebuffers();
-    void initCommandPool();
     void initCommandBuffers();
+    void initSemaphores();
 public:
     VulkanRenderer(const RendererParams &params);
     ~VulkanRenderer();
     bool checkValidationLayerSupport();
     void init();
     void beginFrame();
-    void endFrame();
+    void drawFrame();
     void buildCommandbuffers();
 
     VkDevice getLogicalDevice();

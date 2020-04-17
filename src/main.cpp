@@ -28,7 +28,7 @@ int main() {
 
 	vulkanRenderer.beginFrame();
 	while (!quit) {
-		vulkanRenderer.endFrame();
+		vulkanRenderer.drawFrame();
 		SDL_PollEvent(&e);
 		if (e.type == SDL_QUIT) {
 			quit = true;

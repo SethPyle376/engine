@@ -11,6 +11,8 @@ class VulkanDevice {
     VkPhysicalDeviceFeatures enabledFeatures;
     VkPhysicalDeviceMemoryProperties memoryProperties;
 
+    VkQueue graphicsQueue;
+
     std::vector<std::string> supportedExtensions;
     std::vector<VkQueueFamilyProperties> queueFamilyProperties;
 
@@ -211,7 +213,13 @@ public:
 
         this->enabledFeatures = enabledFeatures;
 
+        vkGetDeviceQueue(logicalDevice, queueFamilyIndices.graphics, 0, &graphicsQueue);
+
         return result;
+    }
+
+    VkCommandPool getCommandPool() {
+        return commandPool;
     }
 
     VkPhysicalDevice getPhysicalDevice() {
@@ -220,6 +228,10 @@ public:
 
     VkDevice getDevice() {
         return logicalDevice;
+    }
+
+    VkQueue getGraphicsQueue() {
+        return graphicsQueue;
     }
 };
 

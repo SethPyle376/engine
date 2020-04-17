@@ -25,8 +25,9 @@ int main() {
 	std::shared_ptr<Resource> vulkanShaderResource = resourceManager->getResource("assets/shaders/test_vk_resource.json");
 	std::shared_ptr<Resource> vulkanShaderResource2 = resourceManager->getResource("assets/shaders/test_vk_resource2.json");
 
+
+	vulkanRenderer.beginFrame();
 	while (!quit) {
-		vulkanRenderer.beginFrame();
 		vulkanRenderer.endFrame();
 		SDL_PollEvent(&e);
 		if (e.type == SDL_QUIT) {

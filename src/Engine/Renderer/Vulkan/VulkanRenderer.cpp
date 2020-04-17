@@ -62,9 +62,51 @@ void VulkanRenderer::init() {
     initRenderPass();
     initFramebuffers();
     initCommandPool();
+    initCommandBuffers();
+}
+
+void VulkanRenderer::buildCommandbuffers() {
+    for (int i = 0; i < commandBuffers.size(); i++) {
+        VkCommandBufferBeginInfo beginInfo = {};
+        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+        beginInfo.flags = 0;
+        beginInfo.pInheritanceInfo = nullptr;
+
+        if (vkBeginCommandBuffer(commandBuffers[i], &beginInfo) != VK_SUCCESS) {
+            spdlog::error("failed to begin vulkan command buffer");
+        } else {
+            spdlog::debug("began vulkan command buffer");
+        }
+
+        std::shared_ptr<VulkanPipelineResource> renderPipeline = std::static_pointer_cast<VulkanPipelineResource>(resourceManager->getResource("assets/shaders/test_vk_resource.json"));
+        VkPipeline pipeline = renderPipeline->getPipeline();
+
+        VkRenderPassBeginInfo renderPassInfo = {};
+        renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+        renderPassInfo.renderPass = renderPass;
+        renderPassInfo.framebuffer = framebuffers[i].framebuffer;
+        renderPassInfo.renderArea.offset = {0, 0};
+        renderPassInfo.renderArea.extent = {params.x, params.y};
+
+        VkClearValue clearColor = {0.0f, 0.0f, 0.0f, 1.0f};
+        renderPassInfo.clearValueCount = 1;
+        renderPassInfo.pClearValues = &clearColor;
+
+        vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+        vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+        vkCmdDraw(commandBuffers[i], 3, 1, 0, 0);
+        vkCmdEndRenderPass(commandBuffers[i]);
+
+        if (vkEndCommandBuffer(commandBuffers[i]) != VK_SUCCESS) {
+            spdlog::error("failed to record vulkan command buffer");
+        } else {
+            spdlog::debug("recorded vulkan command buffer");
+        }
+    }
 }
 
 void VulkanRenderer::beginFrame() {
+    buildCommandbuffers();
     return;
 }
 
@@ -248,5 +290,21 @@ void VulkanRenderer::initCommandPool() {
         spdlog::error("failed to create command pool");
     } else {
         spdlog::debug("vulkan command pool created successfully");
+    }
+}
+
+void VulkanRenderer::initCommandBuffers() {
+    commandBuffers.resize(framebuffers.size());
+
+    VkCommandBufferAllocateInfo allocInfo = {};
+    allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    allocInfo.commandPool = commandPool;
+    allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    allocInfo.commandBufferCount = commandBuffers.size();
+
+    if (vkAllocateCommandBuffers(device->getDevice(), &allocInfo, commandBuffers.data()) != VK_SUCCESS) {
+        spdlog::error("failed to allocate command buffers");
+    } else {
+        spdlog::debug("allocated vulkan command buffers");
     }
 }

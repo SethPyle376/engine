@@ -1,7 +1,7 @@
 #pragma once
 
 struct RendererParams {
-    int x, y;
+    uint32_t x, y;
 };
 
 class Renderer {

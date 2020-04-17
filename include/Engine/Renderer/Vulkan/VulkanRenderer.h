@@ -17,6 +17,7 @@
 #include "Engine/Renderer/Vulkan/VulkanFramebuffer.h"
 
 #include "Engine/Resources/ResourceManager.h"
+#include "Engine/Renderer/Vulkan/Resources/VulkanPipelineResource.h"
 
 const std::vector<const char*> validationLayers = {
     "VK_LAYER_LUNARG_standard_validation"
@@ -49,6 +50,7 @@ private:
     std::vector<VulkanFramebuffer> framebuffers;
 
     VkCommandPool commandPool;
+    std::vector<VkCommandBuffer> commandBuffers;
 
     VkPhysicalDeviceFeatures deviceFeatures = {};
 
@@ -64,6 +66,7 @@ private:
     void initRenderPass();
     void initFramebuffers();
     void initCommandPool();
+    void initCommandBuffers();
 public:
     VulkanRenderer(const RendererParams &params);
     ~VulkanRenderer();
@@ -71,6 +74,7 @@ public:
     void init();
     void beginFrame();
     void endFrame();
+    void buildCommandbuffers();
 
     VkDevice getLogicalDevice();
     VkRenderPass getRenderPass();

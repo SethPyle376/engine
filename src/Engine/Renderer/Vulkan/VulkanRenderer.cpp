@@ -116,7 +116,6 @@ void VulkanRenderer::beginFrame() {
 
 void VulkanRenderer::drawFrame() {
     vkWaitForFences(device->getDevice(), 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
-    vkResetFences(device->getDevice(), 1, &inFlightFences[currentFrame]);
 
     uint32_t imageIndex;
     vkAcquireNextImageKHR(device->getDevice(), swapchain->getSwapchain(), UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);

@@ -34,5 +34,8 @@ int main() {
 			quit = true;
 		}
 	}
+
+	vulkanRenderer.finishFrame();
+
 	return 0;
 }

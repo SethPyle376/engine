@@ -58,6 +58,7 @@ private:
     VkPhysicalDeviceFeatures deviceFeatures = {};
 
     VkRenderPass renderPass;
+    VkRect2D scissor;
 
     std::vector<VkSemaphore> imageAvailableSemaphores;
     std::vector<VkSemaphore> renderFinishedSemaphores;

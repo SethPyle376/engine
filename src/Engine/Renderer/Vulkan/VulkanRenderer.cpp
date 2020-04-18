@@ -98,6 +98,7 @@ void VulkanRenderer::buildCommandbuffers() {
         renderPassInfo.pClearValues = &clearColor;
 
         vkCmdSetViewport(commandBuffers[i], 0, 1, &viewport);
+        vkCmdSetScissor(commandBuffers[i], 0, 1, &scissor);
 
         vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
         vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
@@ -192,6 +193,10 @@ void VulkanRenderer::initViewport() {
     viewport.height = (float)params.y;
     viewport.minDepth = 0.0f;
     viewport.maxDepth = 1.0f;
+
+    scissor = {};
+    scissor.offset = {0, 0};
+    scissor.extent = {(float)params.x, (float)params.y};
 }
 
 void VulkanRenderer::createInstance() {

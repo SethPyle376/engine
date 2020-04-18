@@ -49,6 +49,8 @@ private:
     VulkanDevice* device;
     VulkanSwapchain* swapchain;
 
+    VkViewport viewport;
+
     std::vector<VulkanFramebuffer> framebuffers;
     
     std::vector<VkCommandBuffer> commandBuffers;
@@ -66,6 +68,7 @@ private:
 
     void initSDL();
     void initWindow();
+    void initViewport();
     void initVolk();
     void createInstance();
     void initSwapchain();
@@ -84,6 +87,7 @@ public:
     void drawFrame();
     void finishFrame();
     void buildCommandbuffers();
+    void recreateSwapchain();
 
     VkDevice getLogicalDevice();
     VkRenderPass getRenderPass();

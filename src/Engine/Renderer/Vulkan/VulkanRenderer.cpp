@@ -55,6 +55,7 @@ void VulkanRenderer::init() {
     initSDL();
     initVolk();
     initWindow();
+    initViewport();
     createInstance();
     swapchain = new VulkanSwapchain(instance);
     swapchain->initSurface(window);
@@ -95,6 +96,8 @@ void VulkanRenderer::buildCommandbuffers() {
         VkClearValue clearColor = {0.0f, 0.0f, 0.0f, 1.0f};
         renderPassInfo.clearValueCount = 1;
         renderPassInfo.pClearValues = &clearColor;
+
+        vkCmdSetViewport(commandBuffers[i], 0, 1, &viewport);
 
         vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
         vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
@@ -179,6 +182,16 @@ void VulkanRenderer::initWindow() {
         spdlog::debug("initializing window");
         Uint32 windowFlags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_VULKAN;
         window = SDL_CreateWindow("Titus v0.1", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, params.x, params.y, windowFlags);
+}
+
+void VulkanRenderer::initViewport() {
+    viewport = {};
+    viewport.x = 0.0f;
+    viewport.y = 0.0f;
+    viewport.width = (float)params.x;
+    viewport.height = (float)params.y;
+    viewport.minDepth = 0.0f;
+    viewport.maxDepth = 1.0f;
 }
 
 void VulkanRenderer::createInstance() {
@@ -384,4 +397,11 @@ void VulkanRenderer::initSemaphores() {
 
 void VulkanRenderer::finishFrame() {
     vkDeviceWaitIdle(device->getDevice());
+}
+
+void VulkanRenderer::recreateSwapchain() {
+    vkDeviceWaitIdle(device->getDevice());
+
+    initSwapchain();
+    initRenderPass();
 }

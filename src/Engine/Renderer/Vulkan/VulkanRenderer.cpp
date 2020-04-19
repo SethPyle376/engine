@@ -57,8 +57,7 @@ void VulkanRenderer::init() {
     initWindow();
     initViewport();
     createInstance();
-    swapchain = new VulkanSwapchain(instance);
-    swapchain->initSurface(window);
+    initSwapchain();
     volkLoadInstance(instance);
     device = new VulkanDevice(pickPhysicalDevice());
     device->createLogicalDevice(deviceFeatures, deviceExtensions, nullptr);
@@ -122,7 +121,12 @@ void VulkanRenderer::drawFrame() {
     vkWaitForFences(device->getDevice(), 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
 
     uint32_t imageIndex;
-    vkAcquireNextImageKHR(device->getDevice(), swapchain->getSwapchain(), UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
+    VkResult result = vkAcquireNextImageKHR(device->getDevice(), swapchain->getSwapchain(), UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
+
+    if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+        recreateSwapchain();
+        return;
+    }
 
     if (imagesInFlight[imageIndex] != VK_NULL_HANDLE) {
         vkWaitForFences(device->getDevice(), 1, &imagesInFlight[imageIndex], VK_TRUE, UINT64_MAX);
@@ -163,7 +167,14 @@ void VulkanRenderer::drawFrame() {
     presentInfo.pSwapchains = swapchains;
     presentInfo.pImageIndices = &imageIndex;
 
-    vkQueuePresentKHR(device->getGraphicsQueue(), &presentInfo);
+    result = vkQueuePresentKHR(device->getGraphicsQueue(), &presentInfo);
+
+    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
+        recreateSwapchain();
+        return;
+    } else if (result != VK_SUCCESS) {
+        spdlog::error("error during vulkan presentation");
+    }
 
     currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 
@@ -249,6 +260,7 @@ void VulkanRenderer::createInstance() {
 }
 
 void VulkanRenderer::initSwapchain() {
+    swapchain = new VulkanSwapchain(instance);
     swapchain->initSurface(window);
 }
 
@@ -352,6 +364,8 @@ void VulkanRenderer::initFramebuffers() {
         framebufferInfo.height = params.y;
         framebufferInfo.layers = 1;
 
+        spdlog::debug("params at framebuffer create: {0} {1}", params.x, params.y);
+
         if (vkCreateFramebuffer(device->getDevice(), &framebufferInfo, nullptr, &(framebuffers.at(i).framebuffer)) != VK_SUCCESS) {
             spdlog::error("failed to create framebuffer");
         } else {
@@ -406,7 +420,37 @@ void VulkanRenderer::finishFrame() {
 
 void VulkanRenderer::recreateSwapchain() {
     vkDeviceWaitIdle(device->getDevice());
+    spdlog::debug("recreating swapchain");
 
-    initSwapchain();
+    framebuffers.clear();
+    vkFreeCommandBuffers(device->getDevice(), device->getCommandPool(), static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
+    commandBuffers.clear();
+    spdlog::debug("destroyed command buffers");
+    vkDestroyRenderPass(device->getDevice(), renderPass, nullptr);
+    spdlog::debug("destroyed render pass");
+
+    swapchain->cleanup();
+    spdlog::debug("destroyed swapchain");
+
+    // Doing this because sdl wasn't returning correct window size on ubuntu after resize with events in queue
+    // thats some bullshit
+    SDL_Event ev;
+    while(SDL_PollEvent(&ev)) {
+        spdlog::debug("flushing window event");
+    }
+
+    int width, height;
+    SDL_GetWindowSize(window, &width, &height);
+
+    params.x = width;
+    params.y = height;
+
+    spdlog::debug("params set: {0} {1}", params.x, params.y);
+
+    swapchain->initSurface(window);
+    swapchain->create(params.x, params.y);
     initRenderPass();
+    initFramebuffers();
+    initCommandBuffers();
+    buildCommandbuffers();
 }

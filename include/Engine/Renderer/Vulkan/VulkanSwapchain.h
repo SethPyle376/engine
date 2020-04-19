@@ -90,6 +90,7 @@ public:
     }
 
     void create(uint32_t width, uint32_t height, bool vsync = false) {
+        isDeviceSuitable(physicalDevice, surface, std::vector<const char*>());
         selectColors();
         VkSwapchainKHR oldSwapchain = swapchain;
 
@@ -195,6 +196,7 @@ public:
 
         if (result != VK_SUCCESS) {
             spdlog::error("vulkan failed to create swapchain");
+            throw std::runtime_error("failed to create swapchain");
         } else {
             spdlog::debug("vulkan successfully created swapchain");
         }
@@ -257,5 +259,9 @@ public:
 
     std::vector<SwapChainBuffer>* getSwapChainBuffers() {
         return &buffers;
+    }
+
+    void recreate() {
+        
     }
 };

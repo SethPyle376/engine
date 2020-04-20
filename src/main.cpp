@@ -16,7 +16,7 @@ int main() {
     VulkanRenderer vulkanRenderer = VulkanRenderer(params);
     vulkanRenderer.init();
 
-	VulkanPipelineResourceFactory* vulkanFactory = new VulkanPipelineResourceFactory(vulkanRenderer.getLogicalDevice(), params, vulkanRenderer.getRenderPass());
+	VulkanPipelineResourceFactory* vulkanFactory = new VulkanPipelineResourceFactory(vulkanRenderer.getDevice(), params, vulkanRenderer.getRenderPass());
 	resourceManager->registerFactory(vulkanFactory);
 
     bool quit = false;

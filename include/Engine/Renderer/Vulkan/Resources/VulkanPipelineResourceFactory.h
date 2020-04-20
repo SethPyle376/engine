@@ -7,7 +7,7 @@
 
 class VulkanPipelineResourceFactory : public ResourceFactory {
 private:
-    VkDevice device;
+    VulkanDevice* device;
     VkRenderPass renderPass;
     RendererParams params;
 
@@ -24,7 +24,7 @@ private:
     }
 
 public:
-    VulkanPipelineResourceFactory(VkDevice device, RendererParams params, VkRenderPass renderPass) {
+    VulkanPipelineResourceFactory(VulkanDevice* device, RendererParams params, VkRenderPass renderPass) {
         this->device = device;
         this->resourceType = "vulkan_shader";
         this->params = params;

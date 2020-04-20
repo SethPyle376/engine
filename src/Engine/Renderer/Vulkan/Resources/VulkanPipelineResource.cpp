@@ -7,7 +7,7 @@ VkShaderModule VulkanPipelineResource::createShaderModule(const std::vector<char
     createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
 
     VkShaderModule shaderModule;
-    if (vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
+    if (vkCreateShaderModule(device->getDevice(), &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
         spdlog::error("failed to compile shader module");
     } else {
         spdlog::debug("compiled shader code");
@@ -17,10 +17,10 @@ VkShaderModule VulkanPipelineResource::createShaderModule(const std::vector<char
 
 VulkanPipelineResource::~VulkanPipelineResource() {
     spdlog::debug("destroying graphics pipeline");
-    vkDestroyPipeline(device, graphicsPipeline, nullptr);
-    vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
+    vkDestroyPipeline(device->getDevice(), graphicsPipeline, nullptr);
+    vkDestroyPipelineLayout(device->getDevice(), pipelineLayout, nullptr);
     for (int i = 0; i < createdModules.size(); i++) {
-        vkDestroyShaderModule(device, createdModules[i], nullptr);
+        vkDestroyShaderModule(device->getDevice(), createdModules[i], nullptr);
     }
 }
 
@@ -107,7 +107,7 @@ void VulkanPipelineResource::load(const std::vector<char> &vertexCode, const std
     VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     
-    if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
+    if (vkCreatePipelineLayout(device->getDevice(), &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
         spdlog::error("failed to create pipeline layout");
     } else {
         spdlog::debug("created pipeline layout");
@@ -129,7 +129,7 @@ void VulkanPipelineResource::load(const std::vector<char> &vertexCode, const std
     pipelineInfo.renderPass = renderPass;
     pipelineInfo.subpass = 0;
 
-    if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) {
+    if (vkCreateGraphicsPipelines(device->getDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) {
         spdlog::error("error creating graphics pipeline");
     } else {
         spdlog::debug("created graphics pipeline");

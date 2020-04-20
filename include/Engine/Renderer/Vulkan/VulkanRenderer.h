@@ -92,6 +92,6 @@ public:
     void buildCommandbuffers();
     void recreateSwapchain();
 
-    VkDevice getLogicalDevice();
+    VulkanDevice* getDevice();
     VkRenderPass getRenderPass();
 };

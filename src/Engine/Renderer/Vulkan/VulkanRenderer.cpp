@@ -297,8 +297,8 @@ VkPhysicalDevice VulkanRenderer::pickPhysicalDevice() {
     return physicalDevice;
 }
 
-VkDevice VulkanRenderer::getLogicalDevice() {
-    return device->getDevice();
+VulkanDevice* VulkanRenderer::getDevice() {
+    return device;
 }
 
 VkRenderPass VulkanRenderer::getRenderPass() {

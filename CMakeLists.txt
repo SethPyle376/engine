@@ -12,6 +12,7 @@ include_directories(external/Vulkan-Headers/include)
 include_directories(${SDL2_INCLUDE_DIRS})
 include_directories(external/spdlog/include)
 include_directories(external/rapidjson/include/rapidjson)
+include_directories(external/VulkanMemoryAllocator/src)
 
 file(GLOB MAINSOURCES src/*.cpp)
 file(GLOB RENDERSOURCES src/Engine/Renderer/*/*.cpp src/Engine/Renderer/*/*/*.cpp)

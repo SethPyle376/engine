@@ -4,6 +4,7 @@
 #include <stdexcept>
 
 #include "volk.h"
+#include "vk_mem_alloc.h"
 
 #include "SDL.h"
 #undef main
@@ -15,6 +16,7 @@
 #include "Engine/Renderer/Vulkan/VulkanDevice.h"
 #include "Engine/Renderer/Vulkan/VulkanSwapchain.h"
 #include "Engine/Renderer/Vulkan/VulkanFramebuffer.h"
+#include "Engine/Renderer/Vulkan/VulkanBuffer.h"
 
 #include "Engine/Resources/ResourceManager.h"
 #include "Engine/Renderer/Vulkan/Resources/VulkanPipelineResource.h"

@@ -207,7 +207,7 @@ void VulkanRenderer::initViewport() {
 
     scissor = {};
     scissor.offset = {0, 0};
-    scissor.extent = {(float)params.x, (float)params.y};
+    scissor.extent = {params.x, params.y};
 }
 
 void VulkanRenderer::createInstance() {

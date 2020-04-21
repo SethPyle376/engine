@@ -5,8 +5,8 @@
 
 class VulkanBuffer {
 private:
-    VkBuffer buffer;
-    VmaAllocation allocation;
+    VkBuffer buffer = VK_NULL_HANDLE;
+    VmaAllocation allocation = VK_NULL_HANDLE;
     VkDeviceMemory memory;
 
     VulkanDevice* device;

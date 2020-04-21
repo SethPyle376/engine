@@ -1,6 +1,7 @@
 #include "Engine/Renderer/Vulkan/VulkanBuffer.h"
 
 VulkanBuffer::VulkanBuffer(VulkanDevice* device, VkDeviceSize size, VkBufferUsageFlags buffer_usage, VmaMemoryUsage memory_usage, VmaAllocationCreateFlags flags) {
+    this->device = device;
     VkBufferCreateInfo bufferInfo = {};
     bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
     bufferInfo.usage = buffer_usage;
@@ -24,5 +25,7 @@ VulkanBuffer::VulkanBuffer(VulkanDevice* device, VkDeviceSize size, VkBufferUsag
 }
 
 VulkanBuffer::~VulkanBuffer() {
-    vmaDestroyBuffer(device->getAllocator(), buffer, allocation);
+    if (buffer != VK_NULL_HANDLE && allocation != VK_NULL_HANDLE) {
+        vmaDestroyBuffer(device->getAllocator(), buffer, allocation);
+    }
 }

@@ -1,11 +1,13 @@
 #pragma once
 
 #include "volk.h"
-#include "vk_mem_alloc.h"
+#include "Engine/Renderer/Vulkan/VulkanDevice.h"
 
 class VulkanBuffer {
 private:
     VkBuffer buffer;
+
+    VulkanDevice* device;
 public:
-    VulkanBuffer();
+    VulkanBuffer(VulkanDevice* device);
 };

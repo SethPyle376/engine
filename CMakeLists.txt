@@ -1,8 +1,10 @@
 set(CMAKE_CXX_STANDARD 17)
+set(THREADS_PREFER_PTHREAD_FLAG ON)
 cmake_minimum_required(VERSION 3.4.1)
 
 if (UNIX)
 find_package(SDL2 REQUIRED)
+find_package(Threads REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 endif (UNIX)
 
@@ -28,7 +30,7 @@ if (WIN32)
 endif (WIN32)
 
 if (UNIX)
-target_link_libraries(Application ${CMAKE_DL_LIBS})
+target_link_libraries(Application ${CMAKE_DL_LIBS} Threads::Threads)
 endif (UNIX)
 
 add_subdirectory(external/volk)

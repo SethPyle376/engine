@@ -59,8 +59,9 @@ void VulkanRenderer::init() {
     createInstance();
     initSwapchain();
     volkLoadInstance(instance);
-    device = new VulkanDevice(pickPhysicalDevice());
+    device = new VulkanDevice(instance, pickPhysicalDevice());
     device->createLogicalDevice(deviceFeatures, deviceExtensions, nullptr);
+    device->initAllocator();
     swapchain->connect(device->getPhysicalDevice(), device->getDevice());
     swapchain->create(params.x, params.y);
     initRenderPass();

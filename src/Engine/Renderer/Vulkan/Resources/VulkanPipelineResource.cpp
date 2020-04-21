@@ -1,5 +1,8 @@
 #include "Engine/Renderer/Vulkan/Resources/VulkanPipelineResource.h"
 
+#define VMA_IMPLEMENTATION
+#include "vk_mem_alloc.h"
+
 VkShaderModule VulkanPipelineResource::createShaderModule(const std::vector<char> &code) {
     VkShaderModuleCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;

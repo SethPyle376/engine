@@ -15,6 +15,7 @@
 #include "Engine/Renderer/Vulkan/VulkanSwapchain.h"
 #include "Engine/Renderer/Vulkan/VulkanFramebuffer.h"
 #include "Engine/Renderer/Vulkan/VulkanBuffer.h"
+#include "Engine/Renderer/Vulkan/VulkanVertex.h"
 
 #include "Engine/Resources/ResourceManager.h"
 #include "Engine/Renderer/Vulkan/Resources/VulkanPipelineResource.h"

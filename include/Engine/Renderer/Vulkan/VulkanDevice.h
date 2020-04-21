@@ -50,6 +50,7 @@ public:
     VkResult createLogicalDevice(VkPhysicalDeviceFeatures enabledFeatures, std::vector<const char*> enabledExtensions,
                                     void* pNextChain, bool useSwapChain = true, VkQueueFlags requestedQueueTypes = VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT);
     void initAllocator();
+    VmaAllocator getAllocator();
     VkCommandPool getCommandPool();
     VkPhysicalDevice getPhysicalDevice();
     VkDevice getDevice();

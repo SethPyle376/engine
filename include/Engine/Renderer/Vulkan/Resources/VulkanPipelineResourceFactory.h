@@ -45,7 +45,6 @@ public:
         document.Parse(resourceContents.c_str());
 
         spdlog::debug("Vert: {0} Frag: {1}", document["vertex_code"].GetString(), document["fragment_code"].GetString());
-        
 
         std::vector<char> vertCode = readSpirv(document["vertex_code"].GetString());
         std::vector<char> fragCode = readSpirv(document["fragment_code"].GetString());

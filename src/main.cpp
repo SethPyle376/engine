@@ -4,6 +4,7 @@
 #include "Engine/Resources/ResourceManager.h"
 #include "Engine/Resources/MockResourceFactory.h"
 #include "Engine/Renderer/Vulkan/Resources/VulkanPipelineResourceFactory.h"
+#include "Engine/Renderer/Vulkan/Resources/VulkanMeshResourceFactory.h"
 
 int main() {
 	ResourceFactory* mockFactory = new MockResourceFactory();
@@ -16,15 +17,19 @@ int main() {
     VulkanRenderer vulkanRenderer = VulkanRenderer(params);
     vulkanRenderer.init();
 
-	VulkanPipelineResourceFactory* vulkanFactory = new VulkanPipelineResourceFactory(vulkanRenderer.getDevice(), params, vulkanRenderer.getRenderPass());
-	resourceManager->registerFactory(vulkanFactory);
+	VulkanPipelineResourceFactory* vulkanPipelineFactory = new VulkanPipelineResourceFactory(vulkanRenderer.getDevice(), params, vulkanRenderer.getRenderPass());
+	resourceManager->registerFactory(vulkanPipelineFactory);
+
+	VulkanMeshResourceFactory* vulkanMeshFactory = new VulkanMeshResourceFactory(vulkanRenderer.getDevice());
+	resourceManager->registerFactory(vulkanMeshFactory);
 
     bool quit = false;
 	SDL_Event e;
-
+{
 	std::shared_ptr<Resource> vulkanShaderResource = resourceManager->getResource("assets/shaders/test_vk_resource.json");
 	std::shared_ptr<Resource> vulkanShaderResource2 = resourceManager->getResource("assets/shaders/test_vk_resource2.json");
 
+	std::shared_ptr<Resource> vulkanMeshResource = resourceManager->getResource("assets/meshes/test_vk_mesh.json");
 
 	vulkanRenderer.beginFrame();
 	while (!quit) {
@@ -35,6 +40,8 @@ int main() {
 			quit = true;
 		}
 	}
+}
+
 
 	vulkanRenderer.finishFrame();
 

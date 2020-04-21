@@ -85,6 +85,10 @@ VulkanDevice::VulkanDevice(VkInstance instance, VkPhysicalDevice physicalDevice)
 }
 
 VulkanDevice::~VulkanDevice() {
+    if (allocator) {
+        vmaDestroyAllocator(allocator);
+    }
+    
     if (commandPool) {
         vkDestroyCommandPool(logicalDevice, commandPool, nullptr);
     }
@@ -204,6 +208,10 @@ void VulkanDevice::initAllocator() {
     } else {
         spdlog::debug("created vulkan memory allocator");
     }
+}
+
+VmaAllocator VulkanDevice::getAllocator() {
+    return allocator;
 }
 
 VkCommandPool VulkanDevice::getCommandPool() {

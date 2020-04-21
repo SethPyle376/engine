@@ -7,6 +7,7 @@
 #include "Engine/Renderer/Renderer.h"
 
 #include "Engine/Renderer/Vulkan/VulkanDevice.h"
+#include "Engine/Renderer/Vulkan/VulkanVertex.h"
 
 class VulkanPipelineResource : public Resource {
 private:

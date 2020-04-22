@@ -18,10 +18,14 @@ class VulkanMeshResource : public Resource {
 private:
     VulkanBuffer* buffer;
     VulkanBuffer* createBuffer();
+    void loadVertices();
 
     VulkanDevice* device;
 
 public:
     VulkanMeshResource(VulkanDevice* device);
     ~VulkanMeshResource();
+
+    VkBuffer getBuffer();
+    uint32_t getSize();
 };

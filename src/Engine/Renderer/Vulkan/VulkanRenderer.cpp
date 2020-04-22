@@ -85,6 +85,7 @@ void VulkanRenderer::buildCommandbuffers() {
         }
 
         std::shared_ptr<VulkanPipelineResource> renderPipeline = std::static_pointer_cast<VulkanPipelineResource>(resourceManager->getResource("assets/shaders/test_vk_resource.json"));
+        std::shared_ptr<VulkanMeshResource> testMesh = std::static_pointer_cast<VulkanMeshResource>(resourceManager->getResource("assets/meshes/test_vk_mesh.json"));
         VkPipeline pipeline = renderPipeline->getPipeline();
 
         VkRenderPassBeginInfo renderPassInfo = {};
@@ -103,7 +104,13 @@ void VulkanRenderer::buildCommandbuffers() {
 
         vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
         vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
-        vkCmdDraw(commandBuffers[i], 3, 1, 0, 0);
+
+        VkBuffer vertexBuffers[] = {testMesh->getBuffer()};
+        VkDeviceSize offsets[] = {0};
+
+        vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
+
+        vkCmdDraw(commandBuffers[i], testMesh->getSize(), 1, 0, 0);
         vkCmdEndRenderPass(commandBuffers[i]);
 
         if (vkEndCommandBuffer(commandBuffers[i]) != VK_SUCCESS) {

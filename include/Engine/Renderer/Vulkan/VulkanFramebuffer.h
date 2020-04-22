@@ -4,16 +4,15 @@
 
 struct VulkanFramebuffer {
 private:
-    VkDevice device;
+  VkDevice device;
+
 public:
-    VulkanFramebuffer(VkDevice device) {
-        this->device = device;
-    }
+  VulkanFramebuffer(VkDevice device) { this->device = device; }
 
-    ~VulkanFramebuffer() {
-        vkDestroyFramebuffer(device, framebuffer, nullptr);
-        spdlog::debug("destroying framebuffer");
-    }
+  ~VulkanFramebuffer() {
+    vkDestroyFramebuffer(device, framebuffer, nullptr);
+    spdlog::debug("destroying framebuffer");
+  }
 
-    VkFramebuffer framebuffer;
+  VkFramebuffer framebuffer;
 };

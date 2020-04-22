@@ -1,8 +1,8 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <unordered_map>
-#include <memory>
 #include <vector>
 
 #include "SDL.h"
@@ -14,20 +14,19 @@
 
 class ResourceManager {
 private:
-    static ResourceManager* instance;
-    std::unordered_map<std::string, std::weak_ptr<Resource>> resourceMap;
-    std::unordered_map<std::string, std::unique_ptr<ResourceFactory>> factoryMap;
+  static ResourceManager *instance;
+  std::unordered_map<std::string, std::weak_ptr<Resource>> resourceMap;
+  std::unordered_map<std::string, std::unique_ptr<ResourceFactory>> factoryMap;
 
-    std::shared_ptr<Resource> loadResource(std::string filename);
+  std::shared_ptr<Resource> loadResource(std::string filename);
 
 public:
-    ResourceManager();
+  ResourceManager();
 
-    void registerFactory(ResourceFactory* factory);
+  void registerFactory(ResourceFactory *factory);
 
-    std::shared_ptr<Resource> getResource(std::string filepath);
-    std::vector<std::shared_ptr<Resource>> getResources(RESOURCE_TYPE type);
+  std::shared_ptr<Resource> getResource(std::string filepath);
+  std::vector<std::shared_ptr<Resource>> getResources(RESOURCE_TYPE type);
 
-    static ResourceManager* getInstance();
+  static ResourceManager *getInstance();
 };
-

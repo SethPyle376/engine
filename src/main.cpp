@@ -1,47 +1,53 @@
-#include "Engine/Renderer/Vulkan/VulkanRenderer.h"
 #include "Engine/Renderer/Vulkan/Resources/VulkanPipelineResource.h"
+#include "Engine/Renderer/Vulkan/VulkanRenderer.h"
 
-#include "Engine/Resources/ResourceManager.h"
-#include "Engine/Resources/MockResourceFactory.h"
-#include "Engine/Renderer/Vulkan/Resources/VulkanPipelineResourceFactory.h"
 #include "Engine/Renderer/Vulkan/Resources/VulkanMeshResourceFactory.h"
+#include "Engine/Renderer/Vulkan/Resources/VulkanPipelineResourceFactory.h"
+#include "Engine/Resources/MockResourceFactory.h"
+#include "Engine/Resources/ResourceManager.h"
 
 int main() {
-	ResourceFactory* mockFactory = new MockResourceFactory();
+  ResourceFactory *mockFactory = new MockResourceFactory();
 
-	ResourceManager* resourceManager = ResourceManager::getInstance();
-	
-    RendererParams params;
-    params.x = 1920;
-    params.y = 1080;
-    VulkanRenderer vulkanRenderer = VulkanRenderer(params);
-    vulkanRenderer.init();
+  ResourceManager *resourceManager = ResourceManager::getInstance();
 
-	VulkanPipelineResourceFactory* vulkanPipelineFactory = new VulkanPipelineResourceFactory(vulkanRenderer.getDevice(), params, vulkanRenderer.getRenderPass());
-	resourceManager->registerFactory(vulkanPipelineFactory);
+  RendererParams params;
+  params.x = 1920;
+  params.y = 1080;
+  VulkanRenderer vulkanRenderer = VulkanRenderer(params);
+  vulkanRenderer.init();
 
-	VulkanMeshResourceFactory* vulkanMeshFactory = new VulkanMeshResourceFactory(vulkanRenderer.getDevice());
-	resourceManager->registerFactory(vulkanMeshFactory);
+  VulkanPipelineResourceFactory *vulkanPipelineFactory =
+      new VulkanPipelineResourceFactory(vulkanRenderer.getDevice(), params,
+                                        vulkanRenderer.getRenderPass());
+  resourceManager->registerFactory(vulkanPipelineFactory);
 
-    bool quit = false;
-	SDL_Event e;
+  VulkanMeshResourceFactory *vulkanMeshFactory =
+      new VulkanMeshResourceFactory(vulkanRenderer.getDevice());
+  resourceManager->registerFactory(vulkanMeshFactory);
 
-	std::shared_ptr<Resource> vulkanShaderResource = resourceManager->getResource("assets/shaders/test_vk_resource.json");
-	std::shared_ptr<Resource> vulkanShaderResource2 = resourceManager->getResource("assets/shaders/test_vk_resource2.json");
+  bool quit = false;
+  SDL_Event e;
 
-	std::shared_ptr<Resource> vulkanMeshResource = resourceManager->getResource("assets/meshes/test_vk_mesh.json");
+  std::shared_ptr<Resource> vulkanShaderResource =
+      resourceManager->getResource("assets/shaders/test_vk_resource.json");
+  std::shared_ptr<Resource> vulkanShaderResource2 =
+      resourceManager->getResource("assets/shaders/test_vk_resource2.json");
 
-	vulkanRenderer.beginFrame();
-	while (!quit) {
-		
-		vulkanRenderer.drawFrame();
-		SDL_PollEvent(&e);
-		if (e.type == SDL_QUIT) {
-			quit = true;
-		}
-	}
+  std::shared_ptr<Resource> vulkanMeshResource =
+      resourceManager->getResource("assets/meshes/test_vk_mesh.json");
 
-	vulkanRenderer.finishFrame();
+  vulkanRenderer.beginFrame();
+  while (!quit) {
 
-	return 0;
+    vulkanRenderer.drawFrame();
+    SDL_PollEvent(&e);
+    if (e.type == SDL_QUIT) {
+      quit = true;
+    }
+  }
+
+  vulkanRenderer.finishFrame();
+
+  return 0;
 }

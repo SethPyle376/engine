@@ -12,8 +12,8 @@ int main() {
 	ResourceManager* resourceManager = ResourceManager::getInstance();
 	
     RendererParams params;
-    params.x = 1080;
-    params.y = 720;
+    params.x = 1920;
+    params.y = 1080;
     VulkanRenderer vulkanRenderer = VulkanRenderer(params);
     vulkanRenderer.init();
 

@@ -114,12 +114,13 @@ void VulkanRenderer::buildCommandbuffers() {
     vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS,
                       pipeline);
 
-    VkBuffer vertexBuffers[] = {testMesh->getBuffer()};
+    VkBuffer vertexBuffers[] = {testMesh->getVertexBuffer()};
     VkDeviceSize offsets[] = {0};
 
     vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
+    vkCmdBindIndexBuffer(commandBuffers[i], testMesh->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT16);
 
-    vkCmdDraw(commandBuffers[i], testMesh->getSize(), 1, 0, 0);
+    vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(testMesh->getIndexCount()), 1, 0, 0, 0);
     vkCmdEndRenderPass(commandBuffers[i]);
 
     if (vkEndCommandBuffer(commandBuffers[i]) != VK_SUCCESS) {

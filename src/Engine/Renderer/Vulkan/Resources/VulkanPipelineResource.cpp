@@ -51,9 +51,6 @@ void VulkanPipelineResource::load(const std::vector<char> &vertexCode,
   fragShaderStageInfo.module = fragModule;
   fragShaderStageInfo.pName = "main";
 
-  // VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo,
-  // fragShaderStageInfo };
-
   std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
   shaderStages.push_back(vertShaderStageInfo);
   shaderStages.push_back(fragShaderStageInfo);

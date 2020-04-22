@@ -2,37 +2,52 @@
 
 VulkanMeshResource::VulkanMeshResource(VulkanDevice *device) {
   this->device = device;
-  this->buffer = createBuffer();
+  loadBuffers();
 }
 
-VulkanMeshResource::~VulkanMeshResource() { delete buffer; }
+VulkanMeshResource::~VulkanMeshResource() 
+{ 
+  delete vertexBuffer;
+  delete indexBuffer;
+}
 
-VulkanBuffer *VulkanMeshResource::createBuffer() {
-  VkDeviceSize size = sizeof(vertices[0]) * vertices.size();
-  VulkanBuffer stagingBuffer(device, size,
-                             VK_BUFFER_USAGE_VERTEX_BUFFER_BIT |
+void VulkanMeshResource::loadBuffers() {
+  VkDeviceSize vertexBufferSize = sizeof(vertices[0]) * vertices.size();
+  VkDeviceSize indexBufferSize = sizeof(indices[0]) * indices.size();
+
+  VulkanBuffer vertexStagingBuffer(device, vertexBufferSize,
                                  VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                              VMA_MEMORY_USAGE_CPU_ONLY);
-  stagingBuffer.update(reinterpret_cast<const void *>(vertices.data()), size,
+  vertexStagingBuffer.update(reinterpret_cast<const void *>(vertices.data()), vertexBufferSize,
                        0);
 
-  VulkanBuffer *gpuBuffer = new VulkanBuffer(
-      device, size,
+  VulkanBuffer *vertexDeviceBuffer = new VulkanBuffer(
+      device, vertexBufferSize,
       VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
       VMA_MEMORY_USAGE_GPU_ONLY);
 
-  gpuBuffer->transferDataFrom(&stagingBuffer);
+  vertexDeviceBuffer->transferDataFrom(&vertexStagingBuffer);
 
-  return gpuBuffer;
+  this->vertexBuffer = vertexDeviceBuffer;
+
+  VulkanBuffer indexStagingBuffer(device, indexBufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY);
+  indexStagingBuffer.update(reinterpret_cast<const void *>(indices.data()), indexBufferSize, 0);
+
+  VulkanBuffer* indexDeviceBuffer = new VulkanBuffer(
+    device, indexBufferSize,
+    VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+    VMA_MEMORY_USAGE_GPU_ONLY);
+  
+  indexDeviceBuffer->transferDataFrom(&indexStagingBuffer);
+
+  this->indexBuffer = indexDeviceBuffer;
 }
 
-void VulkanMeshResource::loadVertices() {
-  buffer->update(reinterpret_cast<const void *>(vertices.data()),
-                 sizeof(Vertex) * vertices.size(), 0);
-}
+VkBuffer VulkanMeshResource::getVertexBuffer() { return vertexBuffer->getBuffer(); }
 
-VkBuffer VulkanMeshResource::getBuffer() { buffer->getBuffer(); }
+VkBuffer VulkanMeshResource::getIndexBuffer() { return indexBuffer->getBuffer(); }
 
-uint32_t VulkanMeshResource::getSize() {
-  return static_cast<uint32_t>(vertices.size());
+int VulkanMeshResource::getIndexCount()
+{
+  return indices.size();
 }

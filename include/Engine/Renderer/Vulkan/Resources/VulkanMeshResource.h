@@ -12,18 +12,23 @@ const std::vector<Vertex> vertices = {{{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
                                       {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
                                       {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}};
 
+const std::vector<uint16_t> indices = {0, 1, 2, 2, 3, 0};
+
 class VulkanMeshResource : public Resource {
 private:
-  VulkanBuffer *buffer;
-  VulkanBuffer *createBuffer();
-  void loadVertices();
-
   VulkanDevice *device;
+
+  VulkanBuffer *vertexBuffer;
+  VulkanBuffer *indexBuffer;
+
+  void loadBuffers();
 
 public:
   VulkanMeshResource(VulkanDevice *device);
   ~VulkanMeshResource();
 
-  VkBuffer getBuffer();
-  uint32_t getSize();
+  VkBuffer getVertexBuffer();
+  VkBuffer getIndexBuffer();
+
+  int getIndexCount();
 };

@@ -88,7 +88,7 @@ void VulkanBuffer::transferDataFrom(VulkanBuffer* otherBuffer) {
     vkBeginCommandBuffer(commandBuffer, &beginInfo);
 
     VkBufferCopy copyRegion = {};
-    copyRegion.size = size;
+    copyRegion.size = otherBuffer->getSize();
 
     vkCmdCopyBuffer(commandBuffer, otherBuffer->getBuffer(), getBuffer(), 1, &copyRegion);
 
@@ -107,4 +107,8 @@ void VulkanBuffer::transferDataFrom(VulkanBuffer* otherBuffer) {
 
 VkBuffer VulkanBuffer::getBuffer() {
     return buffer;
+}
+
+VkDeviceSize VulkanBuffer::getSize() {
+    return size;
 }

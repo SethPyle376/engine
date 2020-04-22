@@ -27,4 +27,6 @@ public:
     void update(const void* data, size_t size, size_t offset);
 
     void transferDataFrom(VulkanBuffer* otherBuffer);
+
+    VkDeviceSize getSize();
 };

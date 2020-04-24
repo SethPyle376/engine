@@ -38,8 +38,6 @@ int main() {
 
   std::shared_ptr<Resource> vulkanShaderResource =
       resourceManager->getResource("assets/shaders/test_vk_resource.json");
-  std::shared_ptr<Resource> vulkanShaderResource2 =
-      resourceManager->getResource("assets/shaders/test_vk_resource2.json");
 
   std::shared_ptr<Resource> vulkanMeshResource =
       resourceManager->getResource("assets/meshes/test_vk_mesh.json");

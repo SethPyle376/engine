@@ -13,6 +13,8 @@ class VulkanPipelineResource : public Resource {
 private:
   VkShaderModule createShaderModule(const std::vector<char> &code);
 
+  void createDescriptorSetLayout();
+
   VulkanDevice *device;
   RendererParams params;
   std::vector<VkShaderModule> createdModules;
@@ -20,6 +22,8 @@ private:
   VkRenderPass renderPass;
   VkPipelineLayout pipelineLayout;
   VkPipeline graphicsPipeline;
+
+  VkDescriptorSetLayout descriptorLayout;
 
 public:
   VulkanPipelineResource(VulkanDevice *device, RendererParams params,

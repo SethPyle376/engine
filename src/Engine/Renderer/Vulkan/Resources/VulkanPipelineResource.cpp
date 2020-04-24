@@ -20,8 +20,28 @@ VulkanPipelineResource::createShaderModule(const std::vector<char> &code) {
   return shaderModule;
 }
 
+void VulkanPipelineResource::createDescriptorSetLayout() {
+  VkDescriptorSetLayoutBinding descriptorLayoutBinding = {};
+  descriptorLayoutBinding.binding = 0;
+  descriptorLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  descriptorLayoutBinding.descriptorCount = 1;
+  descriptorLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+
+  VkDescriptorSetLayoutCreateInfo createInfo = {};
+  createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+  createInfo.bindingCount = 1;
+  createInfo.pBindings = &descriptorLayoutBinding;
+
+  if (vkCreateDescriptorSetLayout(device->getDevice(), &createInfo, nullptr, &descriptorLayout) != VK_SUCCESS) {
+    spdlog::error("failed to create vulkan descriptor set layout");
+  } else {
+    spdlog::debug("created vulkan descriptor set layout");
+  }
+}
+
 VulkanPipelineResource::~VulkanPipelineResource() {
   spdlog::debug("destroying graphics pipeline");
+  vkDestroyDescriptorSetLayout(device->getDevice(), descriptorLayout, nullptr);
   vkDestroyPipeline(device->getDevice(), graphicsPipeline, nullptr);
   vkDestroyPipelineLayout(device->getDevice(), pipelineLayout, nullptr);
   for (int i = 0; i < createdModules.size(); i++) {
@@ -31,6 +51,7 @@ VulkanPipelineResource::~VulkanPipelineResource() {
 
 void VulkanPipelineResource::load(const std::vector<char> &vertexCode,
                                   const std::vector<char> &fragmentCode) {
+  createDescriptorSetLayout();
   VkShaderModule vertModule = createShaderModule(vertexCode);
   VkShaderModule fragModule = createShaderModule(fragmentCode);
 
@@ -120,7 +141,9 @@ void VulkanPipelineResource::load(const std::vector<char> &vertexCode,
 
   VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
   pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-
+  pipelineLayoutInfo.setLayoutCount = 1;
+  pipelineLayoutInfo.pSetLayouts = &descriptorLayout;
+  
   if (vkCreatePipelineLayout(device->getDevice(), &pipelineLayoutInfo, nullptr,
                              &pipelineLayout) != VK_SUCCESS) {
     spdlog::error("failed to create pipeline layout");

@@ -53,6 +53,8 @@ private:
 
   std::vector<VkCommandBuffer> commandBuffers;
 
+  VkDescriptorPool descriptorPool = VK_NULL_HANDLE;
+
   VkPhysicalDeviceFeatures deviceFeatures = {};
 
   VkRenderPass renderPass;
@@ -77,6 +79,7 @@ private:
   void initFramebuffers();
   void initCommandBuffers();
   void initSemaphores();
+  void initDescriptorPool();
 
 public:
   VulkanRenderer(const RendererParams &params);

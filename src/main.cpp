@@ -1,14 +1,21 @@
 #include "Engine/Renderer/Vulkan/Resources/VulkanPipelineResource.h"
 #include "Engine/Renderer/Vulkan/VulkanRenderer.h"
 
+#include "Engine/Scene/Actor.h"
+#include "Engine/Scene/Node.h"
+#include "Engine/Scene/Scene.h"
+
 #include "Engine/Renderer/Vulkan/Resources/VulkanMeshResourceFactory.h"
 #include "Engine/Renderer/Vulkan/Resources/VulkanPipelineResourceFactory.h"
 #include "Engine/Resources/MockResourceFactory.h"
 #include "Engine/Resources/ResourceManager.h"
 
-int main() {
-  ResourceFactory *mockFactory = new MockResourceFactory();
+#include "Engine/Renderer/Vulkan/Resources/VulkanMeshInstanceResource.h"
 
+int main() {
+  spdlog::set_level(spdlog::level::debug);
+
+  ResourceFactory *mockFactory = new MockResourceFactory();
   ResourceManager *resourceManager = ResourceManager::getInstance();
 
   RendererParams params;

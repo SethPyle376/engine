@@ -17,7 +17,7 @@ include_directories(external/rapidjson/include/rapidjson)
 include_directories(external/VulkanMemoryAllocator/src)
 include_directories(external/glm)
 
-file(GLOB MAINSOURCES src/*.cpp)
+file(GLOB MAINSOURCES src/*.cpp src/Engine/Scene/*.cpp)
 file(GLOB RENDERSOURCES src/Engine/Renderer/*/*.cpp src/Engine/Renderer/*/*/*.cpp)
 file(GLOB RESOURCESOURCES src/Engine/Resources/*)
 

@@ -53,7 +53,6 @@ bool VulkanRenderer::checkValidationLayerSupport() {
 }
 
 void VulkanRenderer::init() {
-  spdlog::set_level(spdlog::level::debug);
   initSDL();
   initVolk();
   initWindow();

@@ -1,5 +1,6 @@
 #include "Engine/Renderer/Vulkan/Resources/VulkanPipelineResource.h"
 #include "Engine/Renderer/Vulkan/VulkanRenderer.h"
+#include "Engine/Renderer/Vulkan/VulkanDynamicBuffer.h"
 
 #include "Engine/Scene/Actor.h"
 #include "Engine/Scene/Node.h"
@@ -41,6 +42,8 @@ int main() {
 
   std::shared_ptr<Resource> vulkanMeshResource =
       resourceManager->getResource("assets/meshes/test_vk_mesh.json");
+
+  VulkanDynamicBuffer<glm::mat4> buffer = VulkanDynamicBuffer<glm::mat4>(vulkanRenderer.getDevice(), (uint32_t)64);
 
   vulkanRenderer.beginFrame();
   while (!quit) {

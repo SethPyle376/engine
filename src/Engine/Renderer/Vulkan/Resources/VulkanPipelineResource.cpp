@@ -23,7 +23,7 @@ VulkanPipelineResource::createShaderModule(const std::vector<char> &code) {
 void VulkanPipelineResource::createDescriptorSetLayout() {
   VkDescriptorSetLayoutBinding descriptorLayoutBinding = {};
   descriptorLayoutBinding.binding = 0;
-  descriptorLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  descriptorLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
   descriptorLayoutBinding.descriptorCount = 1;
   descriptorLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
 

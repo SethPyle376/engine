@@ -487,3 +487,26 @@ void VulkanRenderer::recreateSwapchain() {
   initCommandBuffers();
   buildCommandbuffers();
 }
+
+void VulkanRenderer::initDescriptorPool() {
+  VkDescriptorPoolSize poolSize{};
+  poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  poolSize.descriptorCount = static_cast<uint32_t>(framebuffers.size());
+
+  VkDescriptorPoolCreateInfo createInfo = {};
+  createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+  createInfo.poolSizeCount = 1;
+  createInfo.pPoolSizes = &poolSize;
+  createInfo.maxSets = framebuffers.size();
+
+  if (vkCreateDescriptorPool(device->getDevice(), &createInfo, nullptr, &descriptorPool) != VK_SUCCESS) {
+    spdlog::error("failed to create descriptor pool");
+  } else {
+    spdlog::debug("created descriptor pool");
+  }
+}
+
+void VulkanRenderer::initDescriptorSet()
+{
+  
+}

@@ -13,17 +13,14 @@ struct UniformBufferObject {
 
 class VulkanMeshInstanceResource : public Resource {
 private:
+  uint32_t descriptorIndex;
   int frameCount = 0;
   VulkanDevice* device;
   UniformBufferObject ubo;
 
   std::shared_ptr<VulkanMeshResource> mesh;
-
-  std::vector<VulkanBuffer*> uniformBuffers;
-
-  void createUniformBuffers();
 public:
-  VulkanMeshInstanceResource(VulkanDevice* device, int frameCount);
+  VulkanMeshInstanceResource(VulkanDevice* device, uint32_t descriptorIndex, int frameCount);
   ~VulkanMeshInstanceResource();
 
   void update(int imageIndex, UniformBufferObject ubo);

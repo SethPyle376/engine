@@ -65,6 +65,9 @@ private:
   std::vector<VkFence> inFlightFences;
   std::vector<VkFence> imagesInFlight;
 
+  VkDescriptorPool descriptorPool;
+  VkDescriptorSet descriptorSet;
+
   size_t currentFrame = 0;
 
   void initSDL();
@@ -80,6 +83,7 @@ private:
   void initCommandBuffers();
   void initSemaphores();
   void initDescriptorPool();
+  void initDescriptorSet();
 
 public:
   VulkanRenderer(const RendererParams &params);

@@ -42,4 +42,6 @@ public:
             const std::vector<char> &fragmentCode);
 
   VkPipeline getPipeline();
+  VkPipelineLayout getPipelineLayout();
+  VkDescriptorSetLayout getDescriptorSetLayout();
 };

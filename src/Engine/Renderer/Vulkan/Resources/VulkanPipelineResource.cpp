@@ -177,3 +177,7 @@ void VulkanPipelineResource::load(const std::vector<char> &vertexCode,
 }
 
 VkPipeline VulkanPipelineResource::getPipeline() { return graphicsPipeline; }
+
+VkPipelineLayout VulkanPipelineResource::getPipelineLayout() { return pipelineLayout; }
+
+VkDescriptorSetLayout VulkanPipelineResource::getDescriptorSetLayout() { return descriptorLayout; }

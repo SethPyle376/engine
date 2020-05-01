@@ -12,6 +12,7 @@
 #include "Engine/Resources/ResourceManager.h"
 
 #include "Engine/Renderer/Vulkan/Resources/VulkanMeshInstanceResource.h"
+#include "Engine/Renderer/Vulkan/VulkanMeshRenderManager.h"
 
 int main() {
   spdlog::set_level(spdlog::level::debug);
@@ -43,7 +44,7 @@ int main() {
   std::shared_ptr<Resource> vulkanMeshResource =
       resourceManager->getResource("assets/meshes/test_vk_mesh.json");
 
-  VulkanDynamicBuffer<glm::mat4> buffer = VulkanDynamicBuffer<glm::mat4>(vulkanRenderer.getDevice(), (uint32_t)64);
+  VulkanMeshRenderManager meshRenderManager = VulkanMeshRenderManager(vulkanRenderer.getDevice(), 1000);
 
   vulkanRenderer.beginFrame();
   while (!quit) {

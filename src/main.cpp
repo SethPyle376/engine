@@ -48,7 +48,11 @@ int main() {
   vulkanRenderer.beginFrame();
   while (!quit) {
 
-    vulkanRenderer.drawFrame();
+    // Render stuff
+    VulkanRenderFrame frame = vulkanRenderer.prepareFrame();
+    vulkanRenderer.submitFrame(frame);
+
+    // SDL input stuff
     SDL_PollEvent(&e);
     if (e.type == SDL_QUIT) {
       quit = true;

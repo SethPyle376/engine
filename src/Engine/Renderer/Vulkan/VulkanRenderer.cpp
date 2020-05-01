@@ -136,73 +136,7 @@ void VulkanRenderer::beginFrame() {
 }
 
 void VulkanRenderer::drawFrame() {
-  vkWaitForFences(device->getDevice(), 1, &inFlightFences[currentFrame],
-                  VK_TRUE, UINT64_MAX);
 
-  uint32_t imageIndex;
-  VkResult result = vkAcquireNextImageKHR(
-      device->getDevice(), swapchain->getSwapchain(), UINT64_MAX,
-      imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
-
-  if (result == VK_ERROR_OUT_OF_DATE_KHR) {
-    recreateSwapchain();
-    return;
-  }
-
-  if (imagesInFlight[imageIndex] != VK_NULL_HANDLE) {
-    vkWaitForFences(device->getDevice(), 1, &imagesInFlight[imageIndex],
-                    VK_TRUE, UINT64_MAX);
-  }
-
-  imagesInFlight[imageIndex] = inFlightFences[currentFrame];
-
-  VkSubmitInfo submitInfo = {};
-  submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-
-  VkSemaphore waitSemaphores[] = {imageAvailableSemaphores[currentFrame]};
-  VkPipelineStageFlags waitStages[] = {
-      VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
-
-  submitInfo.waitSemaphoreCount = 1;
-  submitInfo.pWaitSemaphores = waitSemaphores;
-  submitInfo.pWaitDstStageMask = waitStages;
-
-  submitInfo.commandBufferCount = 1;
-  submitInfo.pCommandBuffers = &commandBuffers[imageIndex];
-
-  VkSemaphore signalSemaphores[] = {renderFinishedSemaphores[currentFrame]};
-  submitInfo.signalSemaphoreCount = 1;
-  submitInfo.pSignalSemaphores = signalSemaphores;
-
-  vkResetFences(device->getDevice(), 1, &inFlightFences[currentFrame]);
-
-  if (vkQueueSubmit(device->getGraphicsQueue(), 1, &submitInfo,
-                    inFlightFences[currentFrame]) != VK_SUCCESS) {
-    spdlog::error("error submitting vulkan queue");
-  }
-
-  VkPresentInfoKHR presentInfo = {};
-  presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-  presentInfo.waitSemaphoreCount = 1;
-  presentInfo.pWaitSemaphores = signalSemaphores;
-
-  VkSwapchainKHR swapchains[] = {swapchain->getSwapchain()};
-  presentInfo.swapchainCount = 1;
-  presentInfo.pSwapchains = swapchains;
-  presentInfo.pImageIndices = &imageIndex;
-
-  result = vkQueuePresentKHR(device->getGraphicsQueue(), &presentInfo);
-
-  if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
-    recreateSwapchain();
-    return;
-  } else if (result != VK_SUCCESS) {
-    spdlog::error("error during vulkan presentation");
-  }
-
-  currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
-
-  return;
 }
 
 void VulkanRenderer::initSDL() {
@@ -488,25 +422,75 @@ void VulkanRenderer::recreateSwapchain() {
   buildCommandbuffers();
 }
 
-void VulkanRenderer::initDescriptorPool() {
-  VkDescriptorPoolSize poolSize{};
-  poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-  poolSize.descriptorCount = static_cast<uint32_t>(framebuffers.size());
+VulkanRenderFrame VulkanRenderer::prepareFrame() {
+  vkWaitForFences(device->getDevice(), 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
 
-  VkDescriptorPoolCreateInfo createInfo = {};
-  createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-  createInfo.poolSizeCount = 1;
-  createInfo.pPoolSizes = &poolSize;
-  createInfo.maxSets = framebuffers.size();
+  uint32_t imageIndex;
 
-  if (vkCreateDescriptorPool(device->getDevice(), &createInfo, nullptr, &descriptorPool) != VK_SUCCESS) {
-    spdlog::error("failed to create descriptor pool");
-  } else {
-    spdlog::debug("created descriptor pool");
+  VkResult result = vkAcquireNextImageKHR(device->getDevice(), swapchain->getSwapchain(), UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
+
+  if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+    recreateSwapchain();
   }
+
+  if (imagesInFlight[imageIndex] != VK_NULL_HANDLE) {
+    vkWaitForFences(device->getDevice(), 1, &imagesInFlight[imageIndex], VK_TRUE, UINT64_MAX);
+  }
+
+  imagesInFlight[imageIndex] = inFlightFences[currentFrame];
+
+  VulkanRenderFrame renderFrame;
+  renderFrame.commandBuffer = commandBuffers[imageIndex];
+  renderFrame.currentFrameIndex = currentFrame;
+  renderFrame.currentImageIndex = imageIndex;
+
+  return renderFrame;
 }
 
-void VulkanRenderer::initDescriptorSet()
-{
-  
+void VulkanRenderer::submitFrame(VulkanRenderFrame &renderFrame) {
+  VkSubmitInfo submitInfo = {};
+  submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+  VkSemaphore waitSemaphores[] = { imageAvailableSemaphores[renderFrame.currentFrameIndex] };
+  VkPipelineStageFlags waitStages[] = {
+      VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+
+  submitInfo.waitSemaphoreCount = 1;
+  submitInfo.pWaitSemaphores = waitSemaphores;
+  submitInfo.pWaitDstStageMask = waitStages;
+
+  submitInfo.commandBufferCount = 1;
+  submitInfo.pCommandBuffers = &(renderFrame.commandBuffer);
+
+  VkSemaphore signalSemaphores[] = {renderFinishedSemaphores[currentFrame]};
+  submitInfo.signalSemaphoreCount = 1;
+  submitInfo.pSignalSemaphores = signalSemaphores;
+
+  vkResetFences(device->getDevice(), 1, &inFlightFences[currentFrame]);
+
+  if (vkQueueSubmit(device->getGraphicsQueue(), 1, &submitInfo,
+                    inFlightFences[currentFrame]) != VK_SUCCESS) {
+    spdlog::error("error submitting vulkan queue");
+  }
+
+  VkPresentInfoKHR presentInfo = {};
+  presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+  presentInfo.waitSemaphoreCount = 1;
+  presentInfo.pWaitSemaphores = signalSemaphores;
+
+  VkSwapchainKHR swapchains[] = {swapchain->getSwapchain()};
+  presentInfo.swapchainCount = 1;
+  presentInfo.pSwapchains = swapchains;
+  presentInfo.pImageIndices = &(renderFrame.currentImageIndex);
+
+  VkResult result = vkQueuePresentKHR(device->getGraphicsQueue(), &presentInfo);
+
+  if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
+    recreateSwapchain();
+    return;
+  } else if (result != VK_SUCCESS) {
+    spdlog::error("error during vulkan presentation");
+  }
+
+  currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 }

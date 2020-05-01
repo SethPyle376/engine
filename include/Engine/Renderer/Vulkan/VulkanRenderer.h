@@ -16,6 +16,7 @@
 #include "Engine/Renderer/Vulkan/VulkanSwapchain.h"
 #include "Engine/Renderer/Vulkan/VulkanUtils.h"
 #include "Engine/Renderer/Vulkan/VulkanVertex.h"
+#include "Engine/Renderer/Vulkan/VulkanRenderFrame.h"
 
 #include "Engine/Renderer/Vulkan/Resources/VulkanMeshResource.h"
 #include "Engine/Renderer/Vulkan/Resources/VulkanPipelineResource.h"
@@ -65,9 +66,6 @@ private:
   std::vector<VkFence> inFlightFences;
   std::vector<VkFence> imagesInFlight;
 
-  VkDescriptorPool descriptorPool;
-  VkDescriptorSet descriptorSet;
-
   size_t currentFrame = 0;
 
   void initSDL();
@@ -82,8 +80,6 @@ private:
   void initFramebuffers();
   void initCommandBuffers();
   void initSemaphores();
-  void initDescriptorPool();
-  void initDescriptorSet();
 
 public:
   VulkanRenderer(const RendererParams &params);
@@ -95,6 +91,9 @@ public:
   void finishFrame();
   void buildCommandbuffers();
   void recreateSwapchain();
+
+  VulkanRenderFrame prepareFrame();
+  void submitFrame(VulkanRenderFrame &frame);
 
   VulkanDevice *getDevice();
   VkRenderPass getRenderPass();

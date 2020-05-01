@@ -1,11 +1,10 @@
 #include "Engine/Renderer/Vulkan/Resources/VulkanMeshInstanceResource.h"
 
-VulkanMeshInstanceResource::VulkanMeshInstanceResource(VulkanDevice* device, uint32_t descriptorIndex, int frameCount)
+VulkanMeshInstanceResource::VulkanMeshInstanceResource(VulkanDevice* device, int descriptorIndex, std::shared_ptr<VulkanMeshResource> mesh)
 {
-  
+  this->mesh = mesh;
   this->descriptorIndex = descriptorIndex;
   this->device = device;
-  this->frameCount = frameCount;
 }
 
 VulkanMeshInstanceResource::~VulkanMeshInstanceResource()
@@ -13,7 +12,7 @@ VulkanMeshInstanceResource::~VulkanMeshInstanceResource()
 
 }
 
-void VulkanMeshInstanceResource::update(int imageIndex, UniformBufferObject ubo)
+void VulkanMeshInstanceResource::update(UniformBufferObject ubo)
 {
 
 }

@@ -11,6 +11,7 @@
 #include "Engine/Resources/MockResourceFactory.h"
 #include "Engine/Resources/ResourceManager.h"
 
+#include "Engine/Renderer/Vulkan/Resources/VulkanMeshInstanceResourceFactory.h"
 #include "Engine/Renderer/Vulkan/Resources/VulkanMeshInstanceResource.h"
 #include "Engine/Renderer/Vulkan/VulkanMeshRenderManager.h"
 
@@ -35,6 +36,9 @@ int main() {
       new VulkanMeshResourceFactory(vulkanRenderer.getDevice());
   resourceManager->registerFactory(vulkanMeshFactory);
 
+  VulkanMeshInstanceResourceFactory *vulkanMeshInstanceFactory = new VulkanMeshInstanceResourceFactory(vulkanRenderer.getDevice());
+  resourceManager->registerFactory(vulkanMeshInstanceFactory);
+
   bool quit = false;
   SDL_Event e;
 
@@ -43,6 +47,10 @@ int main() {
 
   std::shared_ptr<Resource> vulkanMeshResource =
       resourceManager->getResource("assets/meshes/test_vk_mesh.json");
+
+  std::shared_ptr<Resource> vulkanMeshInstanceResource = resourceManager->getResource("assets/meshes/test_vk_mesh_instance.json");
+
+  std::shared_ptr<VulkanMeshInstanceResource> meshInstance = std::static_pointer_cast<VulkanMeshInstanceResource>(vulkanMeshInstanceResource);
 
   VulkanMeshRenderManager meshRenderManager = VulkanMeshRenderManager(vulkanRenderer.getDevice(), 1000);
 

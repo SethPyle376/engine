@@ -444,6 +444,30 @@ VulkanRenderFrame VulkanRenderer::prepareFrame() {
   renderFrame.currentFrameIndex = currentFrame;
   renderFrame.currentImageIndex = imageIndex;
 
+  VkRenderPassBeginInfo renderPassInfo = {};
+  renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+  renderPassInfo.renderPass = renderPass;
+  renderPassInfo.framebuffer = framebuffers[imageIndex].framebuffer;
+  renderPassInfo.renderArea.offset = {0, 0};
+  renderPassInfo.renderArea.extent = {params.x, params.y};
+
+  
+  renderPassInfo.clearValueCount = 1;
+  renderPassInfo.pClearValues = &clearColor;
+
+  renderFrame.renderPassBeginInfo = renderPassInfo;
+
+  VkCommandBufferBeginInfo beginInfo = {};
+  beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+  beginInfo.flags = 0;
+  beginInfo.pInheritanceInfo = nullptr;
+
+  renderFrame.beginInfo = beginInfo;
+
+  renderFrame.viewport = viewport;
+  renderFrame.scissor = scissor;
+
+
   return renderFrame;
 }
 

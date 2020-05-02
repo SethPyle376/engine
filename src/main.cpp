@@ -54,11 +54,12 @@ int main() {
 
   VulkanMeshRenderManager meshRenderManager = VulkanMeshRenderManager(vulkanRenderer.getDevice(), 1000);
 
-  vulkanRenderer.beginFrame();
   while (!quit) {
-
     // Render stuff
     VulkanRenderFrame frame = vulkanRenderer.prepareFrame();
+    frame.begin();
+    meshRenderManager.draw(frame);
+    frame.end();
     vulkanRenderer.submitFrame(frame);
 
     // SDL input stuff
@@ -67,7 +68,6 @@ int main() {
       quit = true;
     }
   }
-
   vulkanRenderer.finishFrame();
 
   return 0;

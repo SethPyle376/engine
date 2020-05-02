@@ -68,6 +68,8 @@ private:
 
   size_t currentFrame = 0;
 
+  VkClearValue clearColor = {0.0f, 0.0f, 0.0f, 1.0f};
+
   void initSDL();
   void initWindow();
   void initViewport();

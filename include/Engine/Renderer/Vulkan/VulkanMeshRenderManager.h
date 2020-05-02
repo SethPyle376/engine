@@ -24,5 +24,5 @@ public:
   VulkanMeshRenderManager(VulkanDevice *device, int maxObjects);
   ~VulkanMeshRenderManager();
 
-  void draw(VulkanRenderFrame frame);
+  void draw(const VulkanRenderFrame& frame);
 };

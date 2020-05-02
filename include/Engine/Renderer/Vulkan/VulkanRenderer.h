@@ -99,4 +99,6 @@ public:
 
   VulkanDevice *getDevice();
   VkRenderPass getRenderPass();
+
+  int getFrameCount();
 };

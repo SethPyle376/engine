@@ -52,7 +52,7 @@ int main() {
 
   std::shared_ptr<VulkanMeshInstanceResource> meshInstance = std::static_pointer_cast<VulkanMeshInstanceResource>(vulkanMeshInstanceResource);
 
-  VulkanMeshRenderManager meshRenderManager = VulkanMeshRenderManager(vulkanRenderer.getDevice(), 1000);
+  VulkanMeshRenderManager meshRenderManager = VulkanMeshRenderManager(vulkanRenderer.getDevice(), 100, vulkanRenderer.getFrameCount());
 
   while (!quit) {
     // Render stuff

@@ -25,4 +25,6 @@ public:
   std::shared_ptr<VulkanMeshResource> getMesh();
 
   void update(UniformBufferObject ubo);
+
+  int getDescriptorIndex();
 };

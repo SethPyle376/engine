@@ -43,8 +43,6 @@ void VulkanBuffer::map() {
 
     if (result != VK_SUCCESS) {
       spdlog::error("failed to map vulkan memory");
-    } else {
-      spdlog::debug("mapped vulkan memory");
     }
 
     mapped = true;
@@ -65,8 +63,6 @@ void VulkanBuffer::flush() {
 
   if (result != VK_SUCCESS) {
     spdlog::error("failed to flush vulkan memory");
-  } else {
-    spdlog::debug("flushed vulkan buffer");
   }
 }
 

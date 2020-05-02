@@ -2,6 +2,9 @@
 
 #include "volk.h"
 
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/string_cast.hpp>
+
 #include "Engine/Renderer/Vulkan/VulkanDevice.h"
 
 template <class T>
@@ -12,6 +15,8 @@ private:
   {
     T *data = nullptr;
   } dataDynamic;
+
+  glm::mat4 mvp = glm::mat4(1.0);
 
   VulkanDevice* device;
 
@@ -27,6 +32,9 @@ public:
   ~VulkanDynamicBuffer();
 
   void update(uint32_t index, T data);
+
+  VkBuffer getBuffer();
+  size_t getDynamicAlignment();
 };
 
 template <class T>
@@ -37,12 +45,19 @@ VulkanDynamicBuffer<T>::VulkanDynamicBuffer(VulkanDevice* device, uint32_t maxIn
   findDynamicAlignment();
 
   buffer = new VulkanBuffer(device, dynamicAlignment * maxInstances, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU);
+  spdlog::debug(glm::to_string(mvp));
 }
 
 template <class T>
 VulkanDynamicBuffer<T>::~VulkanDynamicBuffer()
 {
   delete buffer;
+}
+
+template <class T>
+void VulkanDynamicBuffer<T>::update(uint32_t index, T data)
+{
+  buffer->update(&mvp, sizeof(glm::mat4), 0);
 }
 
 template <class T>
@@ -61,4 +76,16 @@ void VulkanDynamicBuffer<T>::findDynamicAlignment()
   }
 
   spdlog::debug("Dynamic buffer dynamic aligment set to {0} bytes", dynamicAlignment);
+}
+
+template <class T>
+VkBuffer VulkanDynamicBuffer<T>::getBuffer()
+{
+  return buffer->getBuffer();
+}
+
+template <class T>
+size_t VulkanDynamicBuffer<T>::getDynamicAlignment()
+{
+  return dynamicAlignment;
 }

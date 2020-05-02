@@ -15,13 +15,15 @@ private:
   VulkanDevice *device;
   std::shared_ptr<VulkanPipelineResource> pipeline;
   std::vector<VulkanDynamicBuffer<glm::mat4>*> uniformBuffers;
-  std::vector<VkDescriptorPool> descriptorPool;
+  std::vector<VkDescriptorPool> descriptorPools;
   std::vector<VkDescriptorSet> descriptorSets;
   int maxObjects = 0;
+  int frameCount = 0;
 
   void initBuffers();
+  void initDescriptors();
 public:
-  VulkanMeshRenderManager(VulkanDevice *device, int maxObjects);
+  VulkanMeshRenderManager(VulkanDevice *device, int maxObjects, int frameCount);
   ~VulkanMeshRenderManager();
 
   void draw(const VulkanRenderFrame& frame);

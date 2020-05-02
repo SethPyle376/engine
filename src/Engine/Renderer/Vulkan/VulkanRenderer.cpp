@@ -518,3 +518,7 @@ void VulkanRenderer::submitFrame(VulkanRenderFrame &renderFrame) {
 
   currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 }
+
+int VulkanRenderer::getFrameCount() {
+  return framebuffers.size();
+}

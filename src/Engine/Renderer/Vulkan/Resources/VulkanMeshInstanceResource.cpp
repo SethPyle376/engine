@@ -20,3 +20,8 @@ void VulkanMeshInstanceResource::update(UniformBufferObject ubo)
 std::shared_ptr<VulkanMeshResource> VulkanMeshInstanceResource::getMesh() {
   return mesh;
 }
+
+int VulkanMeshInstanceResource::getDescriptorIndex()
+{
+  return descriptorIndex;
+}

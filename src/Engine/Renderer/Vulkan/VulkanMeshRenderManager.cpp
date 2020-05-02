@@ -96,7 +96,7 @@ void VulkanMeshRenderManager::draw(const VulkanRenderFrame& frame) {
     VkBuffer vertexBuffers[] = {meshResource->getVertexBuffer()};
     VkDeviceSize offsets[] = {0};
 
-    uniformBuffers[frame.currentFrameIndex]->update(0, glm::mat4());
+    uniformBuffers[frame.currentFrameIndex]->update(meshInstance->getDescriptorIndex(), glm::mat4(1.0f));
 
     uint32_t dynamicOffset = static_cast<uint32_t>(uniformBuffers[frame.currentFrameIndex]->getDynamicAlignment() * meshInstance->getDescriptorIndex());
 

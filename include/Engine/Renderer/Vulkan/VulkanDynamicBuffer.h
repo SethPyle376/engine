@@ -57,7 +57,7 @@ VulkanDynamicBuffer<T>::~VulkanDynamicBuffer()
 template <class T>
 void VulkanDynamicBuffer<T>::update(uint32_t index, T data)
 {
-  buffer->update(&mvp, sizeof(glm::mat4), 0);
+  buffer->update(&data, sizeof(T), dynamicAlignment * index);
 }
 
 template <class T>

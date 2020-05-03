@@ -9,7 +9,7 @@ VulkanMeshInstanceResource::VulkanMeshInstanceResource(VulkanDevice* device, int
 
 VulkanMeshInstanceResource::~VulkanMeshInstanceResource()
 {
-
+  
 }
 
 void VulkanMeshInstanceResource::update(UniformBufferObject ubo)

@@ -54,11 +54,17 @@ int main() {
 
   VulkanMeshRenderManager meshRenderManager = VulkanMeshRenderManager(vulkanRenderer.getDevice(), 100, vulkanRenderer.getFrameCount());
 
+  Actor* actor = new Actor(meshInstance);
+  Scene scene = Scene();
+  scene.addNode(actor);
+
   while (!quit) {
+    scene.update();
+    std::vector<Node*> drawList = scene.getMeshDrawList();
     // Render stuff
     VulkanRenderFrame frame = vulkanRenderer.prepareFrame();
     frame.begin();
-    meshRenderManager.draw(frame);
+    meshRenderManager.draw(frame, drawList);
     frame.end();
     vulkanRenderer.submitFrame(frame);
 

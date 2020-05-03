@@ -8,6 +8,9 @@
 #include "Engine/Renderer/Vulkan/VulkanDynamicBuffer.h"
 #include "Engine/Renderer/Vulkan/VulkanRenderFrame.h"
 
+#include "Engine/Scene/Node.h"
+#include "Engine/Scene/Actor.h"
+
 #include <chrono>
 
 class VulkanMeshRenderManager : public RenderManager
@@ -27,5 +30,5 @@ public:
   VulkanMeshRenderManager(VulkanDevice *device, int maxObjects, int frameCount);
   ~VulkanMeshRenderManager();
 
-  void draw(const VulkanRenderFrame& frame);
+  void draw(const VulkanRenderFrame& frame, const std::vector<Node*>& drawList);
 };

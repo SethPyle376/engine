@@ -84,38 +84,31 @@ void VulkanMeshRenderManager::initDescriptors() {
 
 }
 
-void VulkanMeshRenderManager::draw(const VulkanRenderFrame& frame) {
+void VulkanMeshRenderManager::draw(const VulkanRenderFrame& frame, const std::vector<Node*>& drawList) {
   std::vector<std::shared_ptr<Resource>> meshes = ResourceManager::getInstance()->getResources(RESOURCE_VULKAN_MESH_INSTANCE);
 
   vkCmdBindPipeline(frame.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->getPipeline());
 
-  for (int i = 0; i < meshes.size(); i++) {
-    std::shared_ptr<VulkanMeshInstanceResource> meshInstance = std::static_pointer_cast<VulkanMeshInstanceResource>(meshes[i]);
-    std::shared_ptr<VulkanMeshResource> meshResource = meshInstance->getMesh();
+  for (int i = 0; i < drawList.size(); i++) {
+    Actor* actor = (Actor*)drawList[i];
 
-    VkBuffer vertexBuffers[] = {meshResource->getVertexBuffer()};
+    VkBuffer vertexBuffers[] = {actor->getMeshInstance()->getMesh()->getVertexBuffer()};
     VkDeviceSize offsets[] = {0};
 
-    static auto startTime = std::chrono::high_resolution_clock::now();
-
-    auto currentTime = std::chrono::high_resolution_clock::now();
-    float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
-
-    glm::mat4 model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     glm::mat4 view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     glm::mat4 proj = glm::perspective(glm::radians(45.0f), 1920.0f / 1080.0f, 0.1f, 10.0f);
     proj[1][1] *= -1;
 
-    glm::mat4 mvp = proj * view * model;
+    glm::mat4 mvp = proj * view * actor->getTransform();
 
-    uniformBuffers[frame.currentFrameIndex]->update(meshInstance->getDescriptorIndex(), mvp);
+    uniformBuffers[frame.currentFrameIndex]->update(actor->getMeshInstance()->getDescriptorIndex(), mvp);
 
-    uint32_t dynamicOffset = static_cast<uint32_t>(uniformBuffers[frame.currentFrameIndex]->getDynamicAlignment() * meshInstance->getDescriptorIndex());
+    uint32_t dynamicOffset = static_cast<uint32_t>(uniformBuffers[frame.currentFrameIndex]->getDynamicAlignment() * actor->getMeshInstance()->getDescriptorIndex());
 
     vkCmdBindDescriptorSets(frame.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->getPipelineLayout(), 0, 1, &(descriptorSets[frame.currentFrameIndex]), 1, &dynamicOffset);
     vkCmdBindVertexBuffers(frame.commandBuffer, 0, 1, vertexBuffers, offsets);
-    vkCmdBindIndexBuffer(frame.commandBuffer, meshResource->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT16);
+    vkCmdBindIndexBuffer(frame.commandBuffer, actor->getMeshInstance()->getMesh()->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT16);
 
-    vkCmdDrawIndexed(frame.commandBuffer, static_cast<uint32_t>(meshResource->getIndexCount()), 1, 0, 0, 0);
+    vkCmdDrawIndexed(frame.commandBuffer, static_cast<uint32_t>(actor->getMeshInstance()->getMesh()->getIndexCount()), 1, 0, 0, 0);
   }
 }

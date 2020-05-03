@@ -3,6 +3,7 @@
 Node::Node()
 {
   parentNode = nullptr;
+  nodeType = BASE;
 }
 
 Node::Node(Node* parentNode)
@@ -12,19 +13,8 @@ Node::Node(Node* parentNode)
   parentNode->addChild(this);
 }
 
-Node::~Node()
-{
-  spdlog::debug("deleting node");
-  if (parentNode != nullptr)
-  {
-    parentNode->killChild(id);
-  }
-
-  if (!childNodes.empty())
-  {
-    spdlog::debug("found child nodes, deleting");
-    killChildren();
-  }
+Node::~Node() {
+  return;
 }
 
 void Node::addChild(Node* childNode)
@@ -53,4 +43,13 @@ void Node::killChildren()
 uint16_t Node::getId()
 {
   return id;
+}
+
+glm::mat4 Node::getTransform()
+{
+  return translation * rotation * scale;
+}
+
+NODE_TYPE Node::getNodeType() {
+  return nodeType;
 }

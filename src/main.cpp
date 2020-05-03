@@ -14,6 +14,7 @@
 #include "Engine/Renderer/Vulkan/Resources/VulkanMeshInstanceResourceFactory.h"
 #include "Engine/Renderer/Vulkan/Resources/VulkanMeshInstanceResource.h"
 #include "Engine/Renderer/Vulkan/VulkanMeshRenderManager.h"
+#include "Engine/Renderer/Vulkan/VulkanImage.h"
 
 int main() {
   spdlog::set_level(spdlog::level::debug);
@@ -53,6 +54,8 @@ int main() {
   std::shared_ptr<VulkanMeshInstanceResource> meshInstance = std::static_pointer_cast<VulkanMeshInstanceResource>(vulkanMeshInstanceResource);
 
   VulkanMeshRenderManager meshRenderManager = VulkanMeshRenderManager(vulkanRenderer.getDevice(), 100, vulkanRenderer.getFrameCount());
+
+  VulkanImage image = VulkanImage(vulkanRenderer.getDevice(), 256, 256, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VMA_MEMORY_USAGE_GPU_ONLY);
 
   Actor* actor = new Actor(meshInstance);
   Scene scene = Scene();

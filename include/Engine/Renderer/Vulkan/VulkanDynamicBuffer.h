@@ -45,7 +45,6 @@ VulkanDynamicBuffer<T>::VulkanDynamicBuffer(VulkanDevice* device, uint32_t maxIn
   findDynamicAlignment();
 
   buffer = new VulkanBuffer(device, dynamicAlignment * maxInstances, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU);
-  spdlog::debug(glm::to_string(mvp));
 }
 
 template <class T>

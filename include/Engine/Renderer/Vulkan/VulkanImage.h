@@ -13,6 +13,8 @@ private:
   VmaAllocation allocation = VK_NULL_HANDLE;
   VkDeviceMemory memory;
 
+  int width, height;
+
   void transitionLayout(VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
 
 public:

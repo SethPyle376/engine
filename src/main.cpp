@@ -55,7 +55,11 @@ int main() {
 
   VulkanMeshRenderManager meshRenderManager = VulkanMeshRenderManager(vulkanRenderer.getDevice(), 100, vulkanRenderer.getFrameCount());
 
+  VulkanBuffer buffer = VulkanBuffer(vulkanRenderer.getDevice(), static_cast<uint32_t>(256 * 256 * 32), VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU);
+
   VulkanImage image = VulkanImage(vulkanRenderer.getDevice(), 256, 256, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VMA_MEMORY_USAGE_GPU_ONLY);
+
+  image.transferFromBuffer(&buffer);
 
   Actor* actor = new Actor(meshInstance);
   Scene scene = Scene();

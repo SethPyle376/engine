@@ -5,6 +5,8 @@ VulkanImage::VulkanImage(VulkanDevice *device, int width, int height,
                          VmaMemoryUsage memoryUsage,
                          VmaAllocationCreateFlags flags) {
   this->device = device;
+  this->width = width;
+  this->height = height;
 
   VkImageCreateInfo imageInfo = {};
   imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -36,8 +38,6 @@ VulkanImage::VulkanImage(VulkanDevice *device, int width, int height,
   } else {
     memory = allocationInfo.deviceMemory;
   }
-
-  transitionLayout(VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 }
 
 VulkanImage::~VulkanImage() {
@@ -87,6 +87,55 @@ void VulkanImage::transitionLayout(VkFormat format, VkImageLayout oldLayout, VkI
   submitInfo.pCommandBuffers = &commandBuffer;
 
   vkEndCommandBuffer(commandBuffer);
+
+  vkQueueSubmit(device->getGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
+  vkQueueWaitIdle(device->getGraphicsQueue());
+
+  vkFreeCommandBuffers(device->getDevice(), device->getCommandPool(), 1,
+                       &commandBuffer);
+}
+
+void VulkanImage::transferFromBuffer(VulkanBuffer* buffer) {
+  transitionLayout(VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+  VkCommandBufferAllocateInfo allocInfo = {};
+  allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+  allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+  allocInfo.commandPool = device->getCommandPool();
+  allocInfo.commandBufferCount = 1;
+
+  VkCommandBuffer commandBuffer;
+  vkAllocateCommandBuffers(device->getDevice(), &allocInfo, &commandBuffer);
+
+  VkCommandBufferBeginInfo beginInfo = {};
+  beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+  beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+  VkBufferImageCopy region{};
+  region.bufferOffset = 0;
+  region.bufferRowLength = 0;
+  region.bufferImageHeight = 0;
+  region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+  region.imageSubresource.mipLevel = 0;
+  region.imageSubresource.baseArrayLayer = 0;
+  region.imageSubresource.layerCount = 1;
+
+  region.imageOffset = {0, 0, 0};
+  region.imageExtent = {
+    width,
+    height,
+    1
+  };
+
+  vkBeginCommandBuffer(commandBuffer, &beginInfo);
+
+  vkCmdCopyBufferToImage(commandBuffer, buffer->getBuffer(), image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+
+  vkEndCommandBuffer(commandBuffer);
+
+  VkSubmitInfo submitInfo = {};
+  submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+  submitInfo.commandBufferCount = 1;
+  submitInfo.pCommandBuffers = &commandBuffer;
 
   vkQueueSubmit(device->getGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
   vkQueueWaitIdle(device->getGraphicsQueue());
